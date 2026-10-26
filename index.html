@@ -1,0 +1,1286 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="AI 이후의 인생게임 — 노동의 가치 발표용 인생 시뮬레이션. 38세부터 눈을 감는 날까지, 선택할 때마다 자아실현·생산성·도덕·관계 게이지가 움직입니다.">
+<meta property="og:title" content="AI 이후의 인생게임">
+<meta property="og:description" content="(전) 무직백수의 살아남기 시즌 2 — 노동의 가치 인생게임">
+<style>
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>AI 이후의 인생게임</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Nanum+Pen+Script&display=swap">
+<style>
+  /* 레이아웃: 1in8b 발표 템플릿 — 다크 종이 위에 HUD(나이·연표·4색 상태막대) + 중대 결정 카드(모노 레이블, 큰 세리프 질문, 번호 선택지) + 라이트 종이 추모관 */
+  :root {
+    --paper: #0D1316; --card: #141D21; --card2: #1A2428; --rule: #2A383D;
+    --ink: #E1E9E6; --ink2: #A3B2AF; --ink3: #8A9A96;
+    --accent: #E2678A; --accent-soft: #3A1C26;
+    --good: #5CC38B; --gold: #D9AF59; --stamp: #4CC0AF; --bad: #F07B6B; --warn: #E2B04C;
+    --grid-lo: #25283F; --grid-mid: #2A8A80; --grid-hi: #B8E8A8;
+    --mem-paper: #F1EADF; --mem-card: #FBF8F2; --mem-rule: #D9D0C0; --mem-ink: #13212A; --mem-ink2: #4A5A61; --mem-accent: #C25C7A; --mem-accent-soft: #F3E3E8; --shelf: #C49A6C; --shelf2: #9E764C;
+    --g-self: var(--gold); --g-prod: var(--stamp); --g-moral: var(--good); --g-bond: var(--accent);
+    --display: "Hahmlet", "Noto Serif KR", Cambria, serif;
+    --body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --mono: "IBM Plex Mono", "Courier New", ui-monospace, monospace;
+    --pen: "Nanum Pen Script", cursive;
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --paper: #F1EADF; --card: #FBF8F2; --card2: #F4EEE4; --rule: #D9D0C0;
+      --ink: #13212A; --ink2: #4A5A61; --ink3: #6B7A80;
+      --accent: #C25C7A; --accent-soft: #F3E3E8;
+      --good: #2F9A62; --gold: #B8892F; --stamp: #1F9A8A; --bad: #D1584A; --warn: #B88A2A;
+      --grid-lo: #DAD2C3; --grid-mid: #5FB3A9; --grid-hi: #8FD39A;
+      color-scheme: light;
+    }
+  }
+  :root[data-theme="light"] {
+    --paper: #F1EADF; --card: #FBF8F2; --card2: #F4EEE4; --rule: #D9D0C0;
+    --ink: #13212A; --ink2: #4A5A61; --ink3: #6B7A80;
+    --accent: #C25C7A; --accent-soft: #F3E3E8;
+    --good: #2F9A62; --gold: #B8892F; --stamp: #1F9A8A; --bad: #D1584A; --warn: #B88A2A;
+    --grid-lo: #DAD2C3; --grid-mid: #5FB3A9; --grid-hi: #8FD39A;
+    color-scheme: light;
+  }
+
+  html, body { height: 100%; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.65; display: flex; flex-direction: column; }
+  * { box-sizing: border-box; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  img.px { image-rendering: pixelated; image-rendering: crisp-edges; }
+  .mono { font-family: var(--mono); }
+  .k { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); }
+  .k b { color: var(--accent); font-weight: 500; }
+
+  /* ---------- HUD ---------- */
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+  .hud { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper); border-bottom: 1px solid var(--rule);
+    padding-block: 10px 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .hud-in { max-width: 1040px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr; gap: 8px 28px; align-items: center; }
+  .brand { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .brand .t { font-family: var(--display); font-weight: 700; font-size: 15px; color: var(--ink2); white-space: nowrap; }
+  .brand .t em { color: var(--accent); font-style: normal; }
+  .age { font-family: var(--mono); font-variant-numeric: tabular-nums; line-height: 1; display: flex; align-items: baseline; gap: 6px; white-space: nowrap; }
+  .age b { font-size: 46px; font-weight: 500; }
+  .age span { font-size: 14px; color: var(--ink3); }
+  .age .yr { margin-left: 8px; }
+  .money { font-family: var(--mono); font-variant-numeric: tabular-nums; display: flex; align-items: baseline; gap: 8px; white-space: nowrap; border-left: 1px solid var(--rule); padding-left: 14px; }
+  .money small { font-size: 11px; letter-spacing: .1em; color: var(--ink3); }
+  .money b { font-size: 20px; font-weight: 500; color: var(--gold); }
+  .money .delta { font-size: 12px; min-width: 0; }
+  .money .delta.up { color: var(--good); } .money .delta.down { color: var(--bad); }
+  .tl { position: relative; height: 28px; min-width: 0; }
+  .tl .rail { position: absolute; left: 0; right: 0; top: 11px; height: 3px; background: var(--rule); }
+  .tl .done { position: absolute; left: 0; top: 11px; height: 3px; background: var(--accent); width: 0%; transition: width .5s ease; }
+  .tl .tick { position: absolute; top: 7px; width: 2px; height: 11px; background: var(--rule); transform: translateX(-1px); }
+  .tl .tick::after { content: attr(data-age); position: absolute; top: 13px; left: 50%; transform: translateX(-50%); font-family: var(--mono); font-size: 11px; color: var(--ink3); }
+  .tl .me { position: absolute; top: 4px; width: 17px; height: 17px; background: var(--accent); border: 3px solid var(--paper); box-shadow: 0 0 0 1px var(--accent); transform: translateX(-8px); transition: left .5s ease; }
+  .tl .pill { position: absolute; right: 0; top: -22px; font-family: var(--mono); font-size: 11px; color: var(--ink3); background: var(--card2); border: 1px solid var(--rule); padding: 1px 8px; }
+  .gauges { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .gauge { min-width: 0; }
+  .gauge .lab { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .gauge .lab span { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink2); }
+  .gauge .bar { height: 7px; background: var(--rule); }
+  .gauge .bar i { display: block; height: 100%; width: 0; transition: width .5s ease; }
+  .gauge.self .bar i { background: var(--g-self); } .gauge.prod .bar i { background: var(--g-prod); } .gauge.moral .bar i { background: var(--g-moral); } .gauge.bond .bar i { background: var(--g-bond); }
+  .gauge .delta { font-family: var(--mono); font-size: 12px; min-height: 16px; margin-top: 2px; }
+  .gauge .delta.up { color: var(--good); } .gauge .delta.down { color: var(--bad); }
+
+  /* ---------- 무대 ---------- */
+  .stage { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding-block: 26px 44px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .card { width: 100%; max-width: 880px; min-width: 0; background: var(--card); border: 1px solid var(--rule); }
+  .card-in { padding: clamp(20px, 3.6vw, 36px); }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px clamp(20px, 3.6vw, 36px); border-bottom: 1px solid var(--rule); flex-wrap: wrap; }
+  h1, h2 { font-family: var(--display); text-wrap: balance; margin: 6px 0 8px; line-height: 1.25; font-weight: 700; }
+  h1 { font-size: clamp(34px, 5vw, 56px); }
+  h2 { font-size: clamp(26px, 3.4vw, 36px); }
+  .lede { color: var(--ink2); margin: 0 0 16px; }
+  .story { font-size: clamp(18px, 2vw, 21px); line-height: 1.75; max-width: 36em; }
+  .story p { margin: 0 0 .9em; } .story p:last-child { margin-bottom: 0; }
+  .story q { quotes: "“" "”"; color: var(--ink); }
+  .story .ai { font-family: var(--mono); font-size: .86em; background: var(--card2); border: 1px solid var(--rule); padding: 1px 7px; }
+  .ref { font-family: var(--mono); font-size: 12.5px; color: var(--stamp); background: var(--card2); border: 1px solid var(--rule); padding: 8px 12px; margin-top: 18px; }
+  .ref b { color: var(--ink3); font-weight: 500; margin-right: 8px; }
+
+  .pause { margin: 22px 0 4px; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--accent-soft); }
+  .pause p { margin: 6px 0 0; font-family: var(--display); font-size: clamp(19px, 2.2vw, 24px); line-height: 1.5; text-wrap: balance; font-weight: 500; }
+
+  .choices { display: grid; gap: 10px; margin-top: 22px; }
+  .choice { display: grid; grid-template-columns: 34px 1fr; gap: 14px; align-items: start; text-align: left; background: var(--card2); border: 1px solid var(--rule); padding: 14px 18px; cursor: pointer; font-size: clamp(17px, 1.9vw, 20px); line-height: 1.5; transition: border-color .12s, background .12s; }
+  .choice:hover, .choice:focus-visible { border-color: var(--accent); background: var(--accent-soft); }
+  .choice .n { font-family: var(--mono); font-size: 14px; color: var(--ink3); margin-top: 3px; }
+  .choice .fx { display: block; margin-top: 4px; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
+  .choice .fx.hidden { visibility: hidden; }
+  .track { height: 3px; background: var(--rule); margin-top: 20px; }
+  .track i { display: block; height: 100%; background: var(--accent); }
+  .track-note { font-family: var(--mono); font-size: 12px; color: var(--ink3); margin-top: 8px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .track-note button { background: none; border: 0; padding: 0; cursor: pointer; color: var(--ink3); text-decoration: underline; font-family: var(--mono); font-size: 12px; }
+
+  .next { margin-top: 24px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+  .btn { background: var(--card2); color: var(--ink); border: 1px solid var(--rule); padding: 11px 20px; cursor: pointer; font-size: 16px; font-weight: 500; }
+  .btn.accent { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.wide { flex: 1; text-align: center; }
+  .hint { font-family: var(--mono); font-size: 12px; color: var(--ink3); margin-top: 16px; }
+
+  /* ---------- 표지 ---------- */
+  .cover { position: relative; }
+  .cover .big { font-family: var(--display); font-size: clamp(44px, 8vw, 88px); line-height: 1.08; margin: 10px 0 14px; letter-spacing: -.01em; font-weight: 800; }
+  .cover .big em { color: var(--accent); font-style: normal; }
+  .cover .sprites { position: absolute; right: 0; top: 0; display: flex; align-items: flex-end; gap: 6px; }
+  .cover .sprites .person { width: 48px; } .cover .sprites .heart { width: 32px; margin-bottom: 72px; margin-right: -26px; } .cover .sprites .dog { width: 56px; }
+  .counters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 18px; margin: 22px 0 10px; }
+  .counter b { display: block; font-family: var(--display); font-size: 40px; line-height: 1; font-weight: 700; }
+  .counter b.pink { color: var(--accent); }
+  .counter span { font-size: 13px; color: var(--ink2); }
+  .topic { display: inline-flex; gap: 10px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+  .topic .badge { background: var(--accent-soft); color: var(--accent); font-family: var(--mono); font-size: 11px; padding: 3px 9px; border: 1px solid var(--accent); }
+  .topic span { font-size: 14px; color: var(--ink2); }
+
+  /* ---------- 인사 기록 카드 ---------- */
+  .regi { border: 1px solid var(--rule); background: var(--card2); }
+  .regi .head { background: var(--accent); color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; gap: 12px; flex-wrap: wrap; }
+  .regi .head b { font-family: var(--display); font-size: 17px; font-weight: 700; }
+  .regi .head .no { font-family: var(--mono); font-size: 12px; opacity: .9; }
+  .regi .body { padding: 18px 20px 22px; }
+  .regi .name { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .regi .name input { background: transparent; border: 0; border-bottom: 1px dashed var(--rule); color: var(--ink); font-family: var(--display); font-size: clamp(30px, 4vw, 42px); font-weight: 700; width: 7ch; padding: 0; }
+  .regi .name input:focus { outline: none; border-bottom-color: var(--accent); }
+  .regi .name small { font-family: var(--mono); font-size: 12px; color: var(--ink3); }
+  .regi .desc { color: var(--ink2); font-size: 14.5px; margin: 6px 0 14px; max-width: 46em; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 20px; border-top: 1px solid var(--rule); padding-top: 14px; }
+  .grid3 div small { display: block; font-family: var(--mono); font-size: 11px; color: var(--ink3); letter-spacing: .06em; }
+  .grid3 div b { font-weight: 600; font-size: 16px; }
+  .regi .person { position: absolute; right: 24px; top: 70px; width: 36px; }
+
+  /* ---------- 인생 기록 (연표) ---------- */
+  .rec { display: grid; }
+  .rec .row { display: grid; grid-template-columns: 56px 1fr; gap: 14px; padding: 12px 0; border-top: 1px solid var(--rule); }
+  .rec .row:first-child { border-top: 0; }
+  .rec .y { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink3); padding-top: 3px; font-size: 14px; }
+  .rec .row b { display: block; font-weight: 600; font-size: 17px; }
+  .rec .row .v { font-family: var(--mono); font-size: 12px; color: var(--stamp); margin-top: 3px; }
+  .rec .row.now b { color: var(--accent); }
+  .rec .row .t { color: var(--ink2); }
+
+  /* ---------- 엔딩 레이아웃 ---------- */
+  .two { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; margin-top: 20px; }
+  .panel { background: var(--card2); border: 1px solid var(--rule); padding: 18px 20px; min-width: 0; }
+  .panel h3 { font-family: var(--display); font-size: 18px; margin: 0 0 4px; font-weight: 700; }
+  .panel .sub { font-family: var(--mono); font-size: 11.5px; color: var(--ink3); margin-bottom: 12px; }
+  .kv { display: grid; gap: 8px; font-size: 14px; }
+  .kv div { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dotted var(--rule); padding-bottom: 6px; }
+  .kv div span:first-child { color: var(--ink3); }
+  .kv div span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-top: 20px; }
+  .tile { background: var(--card2); border: 1px solid var(--rule); padding: 16px 18px; }
+  .tile b { display: block; font-family: var(--display); font-size: 34px; line-height: 1.1; font-weight: 700; }
+  .tile b.pink { color: var(--accent); } .tile b.teal { color: var(--stamp); } .tile b.gold { color: var(--gold); font-size: 26px; }
+  .tile span { font-size: 12.5px; color: var(--ink2); }
+  .chart { width: 100%; max-width: 100%; height: auto; display: block; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; margin-top: 6px; color: var(--ink2); }
+  .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: -1px; }
+  .legend .self::before { background: var(--g-self); } .legend .prod::before { background: var(--g-prod); } .legend .moral::before { background: var(--g-moral); } .legend .bond::before { background: var(--g-bond); }
+
+  /* 인생 지도 */
+  .map { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 5px; margin-top: 8px; }
+  .map .cell { aspect-ratio: 1; max-width: 100%; background: var(--grid-lo); display: grid; place-items: center; font-family: var(--mono); font-size: 11px; color: var(--paper); position: relative; }
+  .map .cell.s0 { background: var(--grid-lo); color: var(--ink3); } .map .cell.s1 { background: var(--grid-mid); } .map .cell.s2 { background: var(--grid-hi); } .map .cell.s3 { background: var(--warn); } .map .cell.s4 { background: var(--ink3); } .map .cell.sd { background: var(--bad); }
+  .map .cell.now { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .map-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--ink2); margin-top: 10px; }
+  .map-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 5px; vertical-align: -1px; }
+  .map-legend .s0::before { background: var(--grid-lo); } .map-legend .s1::before { background: var(--grid-mid); } .map-legend .s2::before { background: var(--grid-hi); } .map-legend .s3::before { background: var(--warn); } .map-legend .s4::before { background: var(--ink3); } .map-legend .sd::before { background: var(--bad); }
+  .map-keys { font-family: var(--mono); font-size: 11px; color: var(--ink3); margin-top: 6px; }
+
+  /* 추모관 (라이트 종이) */
+  .memorial { background: var(--mem-paper); color: var(--mem-ink); border: 1px solid var(--mem-rule); padding: 20px; margin-top: 22px; }
+  .memorial .k { color: var(--mem-ink2); }
+  .mem-grid { display: grid; grid-template-columns: 260px 1fr; gap: 18px; align-items: start; }
+  .mem-card { background: var(--mem-card); border: 1px solid var(--mem-rule); padding: 10px; }
+  .mem-card img { width: 100%; display: block; }
+  .mem-card b { display: block; font-family: var(--display); font-size: 18px; margin-top: 10px; color: var(--mem-ink); }
+  .mem-card small { font-family: var(--mono); font-size: 11.5px; color: var(--mem-ink2); display: block; }
+  .mem-card p { margin: 6px 0 0; font-size: 13.5px; color: var(--mem-ink2); }
+  .mem-card .funeral { width: 100%; height: auto; display: block; border: 1px solid var(--mem-rule); }
+  .fkv { display: grid; gap: 5px; margin-top: 10px; font-size: 12.5px; border-top: 1px solid var(--mem-rule); padding-top: 8px; }
+  .fkv div { display: flex; justify-content: space-between; gap: 8px; }
+  .fkv div span:first-child { color: var(--mem-ink2); font-family: var(--mono); font-size: 11px; letter-spacing: .06em; }
+  .fkv div span:last-child { text-align: right; color: var(--mem-ink); font-variant-numeric: tabular-nums; }
+  .memorial .story .fline { color: var(--mem-ink2); font-size: .92em; border-top: 1px dashed var(--mem-rule); padding-top: 10px; margin-top: 12px; }
+  .memorial img.scene { width: 180px; max-width: 100%; margin-top: 14px; border: 1px solid var(--mem-rule); }
+  .epitaph { font-family: var(--pen); font-size: clamp(26px, 3vw, 34px); line-height: 1.35; color: var(--mem-ink); margin: 0 0 8px; }
+  .ending-title { font-family: var(--display); font-size: clamp(30px, 4vw, 44px); font-weight: 800; color: var(--mem-accent); margin: 0 0 6px; line-height: 1.15; }
+  .memorial .story { color: var(--mem-ink); font-size: clamp(16px, 1.8vw, 19px); }
+  .memorial .story q { color: var(--mem-ink); }
+  .candles { background: #2B2420; margin-top: 18px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .candles .row { display: flex; gap: 8px; align-items: flex-end; flex: 1; }
+  .candles img { width: 14px; }
+  .candles span { font-size: 13px; color: #CDBFB0; }
+  .candles button { background: var(--mem-accent); color: #fff; border: 0; padding: 8px 16px; cursor: pointer; font-size: 14px; }
+
+  /* 마무리 질문 */
+  .cta { background: var(--mem-paper); color: var(--mem-ink); border: 1px solid var(--mem-rule); padding: 30px 24px; text-align: center; margin-top: 22px; }
+  .cta h2 { font-size: clamp(22px, 3vw, 32px); margin: 0 0 6px; color: var(--mem-ink); }
+  .cta p { color: var(--mem-ink2); margin: 0 0 18px; font-size: 15px; }
+  .cta .btn.accent { background: var(--mem-accent); border-color: var(--mem-accent); }
+  .cta .btn { color: var(--mem-ink); border-color: var(--mem-rule); background: var(--mem-card); }
+  .cta .btn.accent { color: #fff; }
+  .cta .next { justify-content: center; }
+  .deco { display: flex; justify-content: center; gap: 4px; margin-top: 12px; align-items: flex-end; }
+  .deco img { width: 34px; } .deco img.h { width: 28px; } .deco img.p { width: 24px; }
+
+  /* 엔딩 지도 오버레이 */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 20; display: grid; place-items: center; padding: 20px; }
+  .overlay .panel { max-width: 760px; width: 100%; max-height: 90vh; overflow: auto; padding: 26px; background: var(--card); }
+  .emap { display: grid; gap: 10px; margin-top: 12px; }
+  .emap .e { border-left: 3px solid var(--rule); padding: 4px 0 4px 14px; }
+  .emap .e b { font-family: var(--display); font-size: 19px; display: block; }
+  .emap .e small { color: var(--ink3); font-family: var(--mono); font-size: 12px; }
+  .emap .e.self { border-color: var(--g-self); } .emap .e.prod { border-color: var(--g-prod); } .emap .e.moral { border-color: var(--g-moral); } .emap .e.bond { border-color: var(--g-bond); }
+
+  .foot { font-family: var(--mono); font-size: 12px; color: var(--ink3); display: flex; gap: 16px; justify-content: space-between; flex-wrap: wrap; margin-top: 26px; }
+  .foot button { background: none; border: 0; padding: 0; cursor: pointer; color: var(--ink3); text-decoration: underline; font-family: var(--mono); font-size: 12px; }
+
+  .fade { animation: fade .4s ease both; }
+  @keyframes fade { from { opacity: .2; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .fade { animation: none; } .tl .me, .tl .done, .gauge .bar i { transition: none; } }
+
+  @media (max-width: 700px) {
+    .hud-in { grid-template-columns: 1fr; gap: 10px; }
+    .tl { margin-top: 18px; }
+    .age b { font-size: 38px; }
+    .gauges { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .choice { grid-template-columns: 26px 1fr; gap: 10px; padding: 13px 14px; }
+    .grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .two, .mem-grid { grid-template-columns: 1fr; }
+    .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cover .sprites { position: static; margin-bottom: 8px; }
+    .cover .sprites .heart { margin-bottom: 40px; }
+  }
+
+  /* 시나리오 출처 / 오류 */
+  .src { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: var(--mono); font-size: 12px; color: var(--ink3); border-top: 1px solid var(--rule); margin-top: 18px; padding-top: 12px; }
+  .lnk { background: none; border: 0; padding: 0; cursor: pointer; color: var(--stamp); text-decoration: underline; font-family: var(--mono); font-size: 12px; }
+  .errs { margin-top: 10px; padding: 10px 14px; border: 1px solid var(--bad); color: var(--bad); font-family: var(--mono); font-size: 12.5px; line-height: 1.6; }
+  .errs b { display: block; margin-bottom: 4px; font-weight: 500; }
+  body.drop::after { content: "시나리오.txt 놓기"; position: fixed; inset: 0; display: grid; place-items: center; background: rgba(226,103,138,.18); border: 3px dashed var(--accent); font-family: var(--mono); font-size: 20px; color: var(--accent); z-index: 30; pointer-events: none; }
+</style>
+</head>
+<body>
+<header class="hud" id="hud" hidden>
+  <div class="hud-in">
+    <div class="brand">
+      <span class="t">AI 이후의 <em>인생게임</em></span>
+      <div class="age"><b id="ageNum">35</b><span>세</span><span class="yr" id="yearNum">· 2034년</span></div>
+      <div class="money" id="money" hidden><small>재산</small><b id="moneyNum">0</b><span class="delta" id="moneyDelta"></span></div>
+    </div>
+    <div class="tl" id="tl"><span class="pill" id="pill"></span><div class="rail"></div><div class="done" id="tlDone"></div><div class="me" id="tlMe"></div></div>
+    <div class="gauges" id="gauges"></div>
+  </div>
+</header>
+
+<main class="stage"><div class="card" id="card"></div></main>
+
+<script type="text/plain" id="scn">
+# ============================================================
+#  AI 이후의 인생게임 · 시나리오 파일  (v4 · 38세 시작 · 3년 간격)
+#  이 파일을 고치면 게임의 문장·선택지·게이지 변화가 바뀝니다.
+#  형식 설명은 "시나리오_편집안내.txt"를 보세요.
+#  '#'으로 시작하는 줄은 주석(무시됨)입니다.
+#
+#  나이 흐름: 38 → 41 → 44(경로 분기) → 47 → 50 → 53 → 56(경로별)
+#             → 59(합류) → 62 → 65 → 68 → 71 → 74 → 77 → 마지막 날(79~83)
+# ============================================================
+
+[설정]
+출생년도 = 1999
+시작나이 = 38
+연표끝 = 85
+시작노드 = n1
+# 게이지는 0~게이지최대. 결정이 15번이라 10으로는 금방 꽉 차서 20으로 둠
+게이지최대 = 20
+# 선택 B(동료) 이후 1년 — 관계가 조금 생겼고, AI 덕에 생산성은 높아진 상태
+시작게이지 = 자아실현 4, 생산성 4, 도덕 5, 관계 4
+# 사망나이 = 기본 + 관계게이지 × 배수 (최대추가 한도) → 79~83세 (관계 8 이상이면 83)
+사망기본 = 79
+사망관계배수 = 0.5
+사망최대추가 = 4
+# 재산: 단위 만원. 엔딩 결정에는 쓰이지 않고 HUD와 엔딩 화면에 표시됨. 선택지에 "재산 +600"처럼 적으면 됨
+시작재산 = 12000
+# 장례식 등급 구간(만원): 이 값 미만/이상으로 조촐 → 보통 → 넉넉 → 호화. 조문객 수는 관계 게이지(조문구간)로 정해짐
+재산구간 = 5000, 15000, 30000
+조문구간 = 6, 12
+표지문구 = (전) 무직백수의 살아남기 시즌 2
+소개 = 회사에 AI가 들어왔지만 안전히 살아남은 당신. 하지만 인생의 선택지는 그것 하나만 있는 것이 아닐텐데..
+마지막질문 = 그래서, 당신에게 가치 있는 일은 무엇입니까?
+마지막부제 = 무엇이 나에게 가치 있는 일인지, 스스로 판단하는 힘.
+# 인생 지도 색 구간: 나이:단계:글자  (단계 s0 무직 · s1 일 · s3 AI 도입 · s2 AI 이후 경로 · s4 퇴직 이후)
+지도 = 27:s0:休, 28:s1:알, 30:s1:취, 34:s1:거, 35:s3:AI, 36:s3:B, 38:s2, 62:s4:퇴
+지도범례 = 休 무직 · 알 알바 · 취 취직 · 거 스파이 제안 거절 · AI 도입 · B 동료를 택함 · 퇴 퇴직 · † 마지막
+
+
+[프롤로그]
+# 나이 | 문장 | 가치 표시(없으면 비움) | 현재(마지막 줄에만)
+27 | 군필무직백수 |
+28 | 모르쇠하다 떠밀려 시작한 알바. 처음으로 사회의 구성원이 된 것 같았다. | 노동의 가치 ① 자아실현
+30 | 제대로 된 일을 하고 싶어졌다. 공부해서 반도체 중소기업에 취직을 하게 되었다. | 노동의 가치 ② 생산성
+34 | 호황이 끝나고 회사가 기울기 시작했다. 핵심 기술을 아는 나에게 대기업과 외국계가 제안했다. 스파이가 되었다면 큰 돈을 벌었을테지만, 마음이 편하지는 않았겠지? | 노동의 가치 ③ 도덕
+35 | 회사에 AI가 들어왔다. 설계와 공정의 상당 부분이 자동화됐고, 내가 하던 일을 AI가 더 빠르고 정확하게 한다. 나는 AI의 결과물을 검수하고, 공정을 관리하고, 중요한 결정을 내리는 사람이 됐다.|
+36 | 회사의 생산성은 크게 올랐다. 더 적은 사람으로 더 많은 성과를 낼 수 있었고 난 선택을 했어야만 했다. 살 사람은 살아야지.. |
+37 | 1년 뒤. 여러 사람들의 고민을 듣고 경험을 나눠 함께 답을 찾았다. 동료들 사이 갈등이 생기면 서로의 입장을 잇는 역할을 했다. 어려운 상황이 오면 곁에서 같이 고민했다. AI가 대신할 수 없는 곳에서, 새로운 보람을 발견했다. | 노동의 가치 ④ 관계
+38 | 나도 이제 40대에 들어가는건가 | ? | 현재
+
+
+# ============================================================
+#  제4장 · 동료를 택한 뒤  (38 · 41 · 44세)
+# ============================================================
+
+[노드 n1]
+나이 = 38
+장 = 제4장 · 동료를 택한 뒤
+제목 = 평가
+본문 =
+매 년마다 찾아오는 순례행사이자 저승사자인 연말 인사 평가시즌이 다가왔다. AI가 도입되고나서 우리 회사의 지표는 상당히 단순해졌는데
+{승인 처리 건수}만을 실적으로 판단한다는 것이였다.
+인간 대 인간으로 이뤄낸 성과들은 어디에 쓰라는 거지? 작년에도 인사평가의 고과가 낮아 고생을 꽤나 했는데, 올해는 그러지 않았어야만 했다.
+선택 =
+1. 지표에 맞춘다. 멘토링이든 뭐든 내가 살고 봐야지? | 생산성 +2, 관계 -1, 재산 +600 | 다음 n2
+2. 지표에 없는 일을 위조한다. 다들 그렇게 살아왔어| 생산성 +2, 자아실현 -1, 도덕 -1, 재산 +600 | 다음 n2 | 표시 record
+3. 없는 걸 없다고 써야지 어쩌겠는가. 그대로 쓴다.  | 자아실현 +2, 생산성 -1, 재산 -300 | 다음 n2
+
+[노드 n2]
+나이 = 41
+장 = 제4장 · 동료를 택한 뒤
+제목 = 사람은 사람이 잘 알기 마련이다
+본문 =
+후배가 올린 공정 변경안을 {AI 승인 시스템}이 세 번째 반려했다. 수율 기준으로는 0.4%p 손해였기에 효율을 따지는 AI가 멈춰세운 모양이였다.
+후배가 나에게로 와서는 '이렇게 되면 사람이 갈려나가 언젠간 사고가 날거다' 라며 간곡히 부탁하기 시작했다.
+어쩌지?
+
+선택 =
+1. AI 판단대로 둔다. 데이터가 그렇게 말한다. | 생산성 +1, 관계 -1, 도덕 -3 | 다음 n3
+2. 내 권한으로 승인한다. 기계가 인간의 연골 건강을 알기나 하겠는가? | 도덕 +2, 관계 +1, 생산성 -5 | 다음 n3 | 표시 override
+
+[노드 n3]
+나이 = 44
+장 = 제4장 · 동료를 택한 뒤
+제목 = 2차 전직
+본문 =
+당신은 AI가 도입되고 난 이후에도 출중한 성과로 훌륭히 살아남았다. 그렇기에 회사에서는 이런 당신의 능력을 높이 사 부서 변경과 함께 승진을 제안하였다. 
+어디로 가야 당신의 능력이 빛을 발할 수 있을까?
+선택 =
+1. AI 운영팀 팀장 —  | 생산성 +2, 재산 +1500 | 다음 a1 | 경로 관리자
+2. 사내 교육 담당 —  | 관계 +1, 자아실현 +1, 재산 +500 | 다음 b1 | 경로 선생
+3. 사무직 잔류 — | 자아실현 +1, 도덕 +1 | 다음 c1 | 경로 사무직
+
+
+# ============================================================
+#  제5장 · 경로 A — 관리자  (47 · 50 · 53 · 56세)
+# ============================================================
+
+[노드 a1]
+나이 = 47
+장 = 제5장 · 관리자
+제목 = 명단
+본문 =
+연차가 쌓이면 자연스레 마주치기 껄끄러운 결정도 해야하기 마련이다.
+경영진이 AI의 생산성을 높이 평가한건지, 당신이 담당하는 부서의 인원 감축 명령이 떨어졌다.
+팀원 셋 중 둘을 줄이라는 지시. 누구를 줄일지 역시도 AI가 추천하고 있었다.
+감축 명단 첫 줄에 내가 멘토링했던 후배의 이름이 있다. 엥? 이럴리가 없는데?
+선택 =
+1. 명단대로 한다. AI가 뽑은 거라 어쩔 수 없었어. | 생산성 +2, 관계 -2, 도덕 -4, 재산 +800 | 다음 a2
+2. 명단을 반려하고, 셋 모두를 다른 라인으로 재배치하는 안을 만들어 올려본다. | 관계 +2, 도덕 +1, 생산성 -1 | 다음 a2
+3. 이건 불합리하다며 상사에게 AI에 대한 불만을 토로한다.  | 자아실현 +1, 도덕 +1, 관계 +1, 생산성 -2, 재산 -300 | 다음 a2 | 표시 stepdown
+
+[노드 a2]
+나이 = 50
+장 = 제5장 · 관리자
+제목 = 야간 무인 운영
+본문 =
+관리자가 된 이후의 대부분의 일은 대시보드를 보다가 생산 라인이나 AI 판단에 문제가 생기면 바로잡는 것이다.
+어느 날은 AI가 제안서를 올렸다. {야간 무인 운영} 이라는 상당히 공격적인 제안이였는데 당신은 그것이 마음에 들지 않았다.
+"반려 사유가 있으면 입력하십시오." 커서가 깜빡인다. 뭐라고 쓰지?
+선택 =
+1. 쓰지 않는다. 다시 생각해보니까 무인 편의점도 있는데 무인 공장이라도 안될게 뭐가 있겠는가. | 생산성 +4, 자아실현 -3, 관계 -2, 재산 +2000 | 다음 a3
+2. 밤에 사람 한 명은 남겨야지! | 관계 +1, 도덕 +1, 생산성 -2 | 다음 a3
+3. 책임은 내가 지는거야. 아무도 남기지 않는 대신에 나만 출근한다는 조건을 붙여본다. | 자아실현 +1, 도덕 +1, 재산 +300 | 다음 a3
+
+[노드 a3]
+나이 = 53
+장 = 제5장 · 관리자
+제목 = 보고서
+본문 =
+새벽 라인에서 경미한 사고가 났다. 설비 쪽 문제였는데 다행스럽게 다친 사람은 없었다.
+경위를 보고할 때 상사가 당신에게 AI가 쓴 경위서를 내밀었는데, 그것엔 이렇게 적혀있었다.
+원인: "작업자 과실 100%-" 하지만 자리로 돌아온 당신이 로그를 보니 AI가 경고를 11초 늦게 띄웠다. 
+AI 얘는 털릴 상사도 없는데 왜 거짓말을 한걸까?  하지만 시간이 없어 빠르게 경위서에 대한 것을 결정해야만 했다.
+선택 =
+1. AI 보고서대로 결재한다. 다친 사람도 없는데, 굳이 바꿔야 할까? | 생산성 +1, 도덕 -2, 재산 +300 | 다음 a4
+2. 보고서를 고쳐 쓴다. 할 건 해야지. | 도덕 +2, 생산성 -4, 관계 +1, 재산 -500 | 다음 a4 | 표시 report11
+3. 그 작업자를 불러 둘이서 보고서를 다시 쓴다. | 관계 +2, 도덕 +1 | 다음 a4
+
+[노드 a4]
+나이 = 56
+장 = 제5장 · 관리자
+제목 = 후임
+본문 =
+시간이 꽤나 흘렀다. 당신은 이제 고연차 중 고연차가 되었고 정년에 다가오자 AI의 성능 역시도 꾸준히 올라오고 있었다.
+경영진이 말했다. "팀장 자리는 AI 에이전트가 맡을 계획이긴 한데 후임으로 추천할만한 사람이 있으신가요? 저희가 결정을 내려보겠습니다."
+후임으로 사람을 추천할 수 있는 마지막 기회다. 화려하게 당신의 커리어를 마무리지어보자.
+선택 =
+1. AI 에이전트에 맡긴다. 어차피 내 일도 대시보드를 보는 일이었다. | 생산성 +2, 관계 -4, 자아실현 -4, 재산 +1000 | 다음 n4
+2. 예전에 명단에 올랐던 그 후배를 추천한다. | 관계 +2, 자아실현 +1, 생산성 -6, 재산 -500 | 다음 n4
+
+
+
+# ============================================================
+#  제5장 · 경로 B — 선생  (47 · 50 · 53 · 56세)
+# ============================================================
+
+[노드 b1]
+나이 = 47
+장 = 제5장 · 선생
+제목 = 24시간 대응법
+본문 =
+'AI와 일하는 법'이라는 교육 프로그램을 3년째 하고 있다. 수강생은 크게 둘로 나뉜다. AI 맹신자와 신봉자들.
+강사 업무를 이어나가는 도중에 회사 측에서 제안이 들어왔다.
+"교육 내용을 챗봇에 학습시키면 24시간 질문을 받을 수 있습니다. 생산적이지 않나요?"
+음, 합리적인 선택이지만 당신은 챗봇이 일한다는 핑계로 다음 연봉 협상 때 당신의 연봉이 줄어들 것이라는 것을 알고 있어야만 한다.
+
+선택 =
+1. 챗봇으로 넘긴다. 매일 몇 시간씩 질문을 받는 것보다는 돈을 덜 받는게 낫겠다. | 생산성 +5, 관계 -4, 재산 -1200 | 다음 b2
+2. 거절한다. 질문은 묻는 사람의 얼굴을 보고 받아야 한다. 내 밥그릇은 내가 챙겨야지 | 관계 +4, 자아실현 +2, 생산성 -5, 재산 +800 | 다음 b2
+3. 절충을 해보자. 챗봇은 만들되, 챗봇이 못 답한 질문만 모아 매주 사람이 모이는 시간을 만든다. | 관계 +1, 생산성 +1, 재산 -300 | 다음 b2
+
+[노드 b2]
+나이 = 50
+장 = 제5장 · 선생
+제목 = 새벽 전화
+본문 =
+교육을 받은 후배들은 다른 회사로 흩어졌다.
+새벽 두 시, 그 중 한 명이 전화했다. "선배, 한번만 도와주세요..!"
+선택 =
+1. "우리 회사 일이 아니야." 선을 긋는다. | 생산성 +1, 관계 -1 | 다음 b3
+2. 같이 도와준다. 그래도 내 후배인데 어쩔 수 없다. | 관계 +2, 도덕 +1, 생산성 -7 | 다음 b3
+3. 그 후배를 우리 회사로 데려올 방법을 찾는다. 이렇게 경쟁사에 인재를 뺏길 수는 없다. | 관계 +1, 생산성 +1 | 다음 b3
+
+[노드 b3]
+나이 = 53
+장 = 제5장 · 선생
+제목 = OOO의 뉴런과 수분감
+본문 =
+어느새 10년동안 이 일을 맡고 있게 되었다. 당신은 이쪽 분야에서 이제 잔뼈가 굵어져 유튜브나 출판사에 내 강의들을 올리며 인지도를 쌓아가고 있었다.
+회사는 당신 강의의 10년치 녹화본을 AI에 학습시켜 {그룹 표준 교육}으로 만들겠다고 한다. 계열사 전체에 배포된다고 하는데?
+선택 =
+1. 허락한다. 직업 정신으로 많은 사람에게 좋은 지식을 전해주는 건 전혀 나쁘지 않다. | 생산성 +2, 자아실현 -3, 재산 +1000 | 다음 b4
+2. 확실히 내 몫을 챙겨야한다. 당분간은 만들지 말아달라고 부탁한다. | 자아실현 +4, 생산성 -6, 재산 +2500 | 다음 b4
+
+[노드 b4]
+나이 = 56
+장 = 제5장 · 선생
+제목 = 자문이라는 이름의 좌천
+본문 =
+AI 교육도 이제 어느정도의 틀이 잡히고, 경영진은 당신을 못살게 굴고 싶어하는 모양이다. 
+명분상 승진이긴 하지만 당신은 'AI 교육 자문'이라는 이름의 직책을 맡게 된다는 소식을 들었다.
+선택 =
+1. 맡는다. 어쩔 수 없지.. | 관계 +2, 자아실현 -3, 재산 +800 | 다음 n4
+2. 사양한다. 회사의 눈치는 보이겠지만 난 아직 현역을 뛸 수 있다. | 자아실현 +3 , 생산성 -7, 재산 -1500 | 다음 n4
+
+
+# ============================================================
+#  제5장 · 경로 C — 사무직 유지  (47 · 50 · 53 · 56세)
+# ============================================================
+ 
+[노드 c1]
+나이 = 47
+장 = 제5장 · 사무직
+제목 = 승진 못 한 사람의 자리
+본문 =
+동기들은 팀장이 되거나 강사가 됐고, 당신은 여전히 승인 화면 앞에 앉아 있다. 
+새로 온 팀장은 AI 운영팀 출신 서른다섯이였다. 그는 회의 도중 방침이 바뀌었다고 당신에게 전했다.
+"검수 기준은 AI 추천값으로 통일하세요. 개인 판단보다 AI의 판단이 더 뛰어나다는 판단으로 내려온 지시입니다."
+선택 =
+1. 시키는 대로 한다. 어차피 내 노동의 가치는 생산성에서 비롯되는게 아니니까, 다른 쪽에 힘을 쏟는다 | 생산성 +2, 자아실현 -2, 도덕 -1, 재산 +300 | 다음 c2
+2. 겉으로는 따르고, 내 판단은 따로 수첩에 적는다. 아무리 그래도 내 판단 하나쯤은 있는게 나을 것 같다. | 자아실현 +2, 도덕 +1, 생산성 -1 | 다음 c2 | 표시 memo
+3. 회의를 잡는다. 팀장님과 오붓하게 단 둘의 시간을 보낸다. 굿 바이, 내 연봉. | 관계 -2, 도덕 +2, 생산성 -2, 재산 -1500 | 다음 c2
+ 
+[노드 c2]
+나이 = 50
+장 = 제5장 · 사무직
+제목 = 하나 둘 씩 사라지는
+본문 =
+옆자리 동료가 희망퇴직으로 나갔다. 사무실에 남은 사무직은 당신 포함 넷.
+어느새 회사는 각자에게 {사무 보조 AI 에이전트}를 하나씩 붙여줬다. 건너편 동료는 에이전트한테 전부 맡기고 하루 종일 유튜브를 본다.
+문제는 그 사람 실적이 당신보다 좋다는 것이다. 
+선택 =
+1. 나도 에이전트한테 다 맡기고 나도 유튜브를 본다. | 생산성 -4, 자아실현 -3 | 다음 c3
+2. AI에게 맡겨놓고 주요 거래처 사장님과 약속을 잡는데 시간을 쓴다. | 자아실현 +3, 생산성 -3, 관계 +10, 재산 -300 | 다음 c3
+3. 그러다 다음 방출 명단에 오르고 말거야. 동료에게 따끔한 일침을 날린다. | 관계 -5 | 다음 c3
+ 
+[노드 c3]
+나이 = 53
+장 = 제5장 · 사무직
+제목 = 사무실 폐쇄 안내
+본문 =
+회사가 사무직 전원 재택 전환을 결정했다. 
+점심 같이 먹던 사람들, 복도에서 붙잡고 물어보던 후배들이 전부 메신저로 바뀐다고 한다.
+출퇴근 왕복 두 시간이 사라지는 건 좋은데 허전한 이 기분은 뭘까? 찬반투표가 올라오고 있었다.
+선택 =
+1. 재택 환영! 재택 근무는 대기업의 상징이다. | 생산성 +2, 관계 -3, 재산 +400 | 다음 c4
+2. 아무리 그래도 회사에는 출근해야 한다. | 관계 +3, 생산성 -1 | 다음 c4
+
+ 
+[노드 c4]
+나이 = 56
+장 = 제5장 · 사무직
+제목 = 30년차 
+본문 =
+정년까지 6년. 
+회사가 사무직 검수 업무 자체를 없애기로 했다. 당신 자리는 AI 에이전트가 맡게 될 정도로 AI의 성능이 훌쩍 올라왔다. 인사팀이 조심스럽게 제안했다.
+"정년까지 '검수 품질 모니터링' 명목으로 자리는 두겠습니다. 다만… 하실 일은 없습니다. 월급은 그대로고요."
+선택 =
+1. 받는다. 6년치 월급은 월급이다. 할 일이 없는 게 죄는 아니잖아? | 생산성 +3, 자아실현 -3, 재산 +6000 | 다음 n4
+2. 할 일을 스스로 만든다. AI가 승인·반려한 것 중 이상한 건만 모아 주간 리포트를 쓴다. 아무도 안 시켰다. | 자아실현 +2, 도덕 +2, 생산성 -1, 재산 +6000 | 다음 n4 | 표시 weekly
+3. 일을 하지 않는데 돈은 받을 수 없다며 거절한다. | 도덕 +6, 생산성 -4, 재산 +1000 | 다음 n4
+
+# ============================================================
+#  제6~7장 · 합류  (59 · 62세)
+# ============================================================
+
+[노드 n4]
+나이 = 59
+장 = 제6장 · 잠시 멈춤
+제목 = 정산의 시간
+본문 =
+AI가 들어온 지 스물네 해. 회사는 그때보다 사람이 훨씬 줄어있었다. 당신은 그 안에 용케도 살아남아 있었다. 축하한다.
+돌아보면 AI가 끝내 대신하지 못한 게 딱 하나 있었던 것 같은데, 그게 뭐였더라?
+멈춤 = 당신이 한 일 중에서, AI가 끝내 대신할 수 없었던 것은 무엇이었습니까?
+선택 =
+1. 내 손으로, 내 귀로 직접 해봐야 아는 감각들 | 자아실현 +3 | 다음 n5
+2. "이건 안 됩니다"라고 말할 수 있는 용기와 책임 | 도덕 +3 | 다음 n5
+3. 누군가가 굳이 나를 찾아와서, 그러면서 함께 시간을 지내며 쌓는 기억들 | 관계 +3 | 다음 n5
+
+[노드 n5]
+나이 = 62
+장 = 제7장 · 마지막 출근
+제목 = 이걸로 끝이야?
+본문 =
+예순둘. 마지막 출근이다. 책상을 비우는 데는 짐이 많은게 무색하게도 10분밖에 걸리지 않았다.
+대시보드는 당신이 없어도 움직일 것이고, 회사 역시도 마찬가지로 잘 움직이 것이다. 
+인사팀이 당신에게 서류 두 장을 내밀었다. 송별회 일정표, 그리고 업무를 2년 더 연장할 수 있는 계약직 계약서.
+선택 =
+1. 둘 다 사양하고 조용히 나간다. 미련 따위 남기지 않는다. | 자아실현 +3, 생산성 -2, 재산 +3000 | 다음 n6
+2. 송별회에서 후배들에게 내 기록을 넘긴다. 후배들한테 자랑이라도 좀 해야지? | 관계 +2, 도덕 +2, 재산 +2900 | 다음 n6
+3. 계약서에 서명한다. 일을 계속하는게 정신 건강에 좋을 것 같으니까. | 생산성 +3, 자아실현 -2, 재산 +7000 | 다음 n6 | 표시 contract
+
+
+# ============================================================
+#  제8~10장 · 퇴직 이후 → 마지막 날  (65 · 68 · 71 · 74 · 77세 · 마지막 날)
+# ============================================================
+
+[노드 n6]
+나이 = 65
+장 = 제8장 · 일하지 않는 사람
+제목 = 무직백수 (날조 X)
+본문 =
+연금은 나오고, 시간은 남는다! 집 앞 공원 벤치가 당신의 새 사무실이 됐다. (전) 무직백수, 38년 만에 복귀.
+@경로 관리자 | 회사에서는 가끔 메일이 온다. 아마 당신이 남겨놓은 메일 쪽으로 실수로 메일이 오는 것일 것이다.
+@경로 선생 | 교육받았던 후배들이 가끔 찾아온다. 손에 든 건 늘 공정 도면이다. 빈손으로 오는 법이 없다.
+@경로 사무직 | 같은 사무실에서 버티던 후배들이 명절이면 집에 모인다. 안주 삼아 그 서른다섯 팀장 얘기를 한다.
+노인들을 위한 일자리 프로그램의 일환으로, 
+구청에서 전단이 왔다. "60+ 일자리 · AI 데이터 라벨링 재택 근무 · 시급 12,000원." 같은 날 오랜 친구가 교장으로 있는 공업고에서도 전화가 왔다. 아무래도 나이가 먹어도 인기는 사라지지 않는 모양이다-
+선택 =
+1. 공업고 방과후 수업을 맡는다. 무급이지만 가만히 있는 것보단 이게 훨씬 낫지. | 관계 +3, 자아실현 +1, 생산성 -1 | 다음 n7
+2. 데이터 라벨링 재택 일을 한다. 시급 1만 2천 원. 옛날 생각나고 좋네. | 생산성 +2, 자아실현 -2, 재산 +600 | 다음 n7
+3. 둘 다 거절한다. 38년 일했으면 쉴 자격은 있지 않나? | 자아실현 +1, 관계 -2 | 다음 n7
+
+[노드 n7]
+나이 = 68
+장 = 제8장 · 일하지 않는 사람
+제목 = 돈은… 많이 못 드려요
+본문 =
+옛 후배가 찾아왔다. 회사를 나와 작은 설비 진단 업체를 차렸단다. 직원 둘, AI 하나.
+"선배, 저희 AI가 맞는 소리를 하는지 틀린 소리를 하는지 봐줄 사람이 없어요. 한 달에 두 번만 와주세요. 돈은… 많이 못 드려요."
+@경로 관리자 | 그때 감축 명단 첫 줄에 있던 그 후배였다.
+@경로 선생 | 당신 교육 첫 기수였던 그 후배였다.
+@경로 사무직 | 퇴근 뒤 같이 라인을 돌던 그 후배였다.
+선택 =
+1. 간다. 돈 얘기는 꺼내지도 않는다. | 관계 +3, 자아실현 +1, 생산성 -1 | 다음 n8
+2. 간다. 단, 제값은 받는다. 일은 일이고 정은 정이다. | 생산성 +2, 관계 +1, 재산 +1200 | 다음 n8
+3. 사양한다. 이제 판단은 걔네 몫이다. 언제까지 내가 봐주겠는가. | 도덕 +1, 자아실현 +1, 관계 -1 | 다음 n8
+
+[노드 n8]
+나이 = 71
+장 = 제9장 · 손주
+제목 = 할아버지는 무슨 일 했어?
+본문 =
+손주가 열 살이다. 학교 숙제가 "어른에게 물어보기"란다. 숙제가 참 편해졌다.
+손주의 세상에서는 AI가 거의 모든 일을 한다. 손주가 공책을 펴고 묻는다. "할아버지, 일을 한다는 게 뭐야?"
+38년을 일했는데 이 질문에 바로 답이 안 나온다. 큰일이다.
+멈춤 = AI가 거의 모든 일을 하는 세상의 아이에게, 당신은 ‘일’을 뭐라고 설명하겠습니까?
+선택 =
+1. "내가 누구인지 알게 되는 거야. 손으로 해보면 알아." | 자아실현 +3 | 다음 n9
+2. "세상에 쓸모 있는 걸 만들어서 증명하는 거야. 월급은 덤이고." | 생산성 +3 | 다음 n9
+3. "해도 되는 일이랑 안 되는 일을 가르는 거야. AI는 그걸 못했으니까." | 도덕 +3 | 다음 n9
+4. "누군가 나를 필요로 하는 거지." | 관계 +3 | 다음 n9
+
+[노드 n9]
+나이 = 74
+장 = 제9장 · 정리
+제목 = 상자 하나
+본문 =
+집을 줄여 이사한다. 40년치 짐을 상자 네 개로 줄여야 한단다. 누가 정한 건지 모르겠지만 넷이다. 어차피 들고갈 짐도 없으니까 잘된건가 싶기도 하다.
+마지막 상자를 무엇으로 채울까?
+선택 =
+1. 통장과 집문서.  현실적인 게 최고다. | 생산성 +3, 재산 -5000 | 다음 n10
+2. 사유서, 수동 승인 기록, 반려한 명단. 후배한테. 쓸 일이 없길 바라면서. | 도덕 +3 | 다음 n10
+3. 공구함이랑 라인 소리 녹음 파일. 손주한테. 쓸 일은 없겠지만. | 자아실현 +3 | 다음 n10
+4. 전화번호 수첩. 아무한테도 안 주고 내 옆에. 전화 오면 받아야 하니까. | 관계 +3 | 다음 n10
+
+[노드 n10]
+나이 = 77
+장 = 제10장 · 간병
+제목 = 평안하신가요
+본문 =
+혼자 걷기가 어려워졌다. 아이들이 모여 상의하는 소리가 거실에서 들린다.
+이제 슬슬 간병을 받아야 할 나이가 다가오기 시작함을 느끼고 있다. 
+AI 간병을 받아야 할까? 아니면 간병인을 고용할까?
+선택 =
+1. AI 간병으로 한다. 누구한테도 짐이 되기는 싫다. | 생산성 +1, 관계 -2, 재산 -2000 | 다음 n11
+2. 간병인을 고용한다. 혼자 있으면 적적하다. | 관계 +3, 재산 -6000 | 다음 n11
+3. 둘 다 미룬다. 손은 아직 움직인다. 될 때까지 혼자 한다. 고집은 늙지 않는다. | 자아실현 +2, 도덕 +1 | 다음 n11
+
+[노드 n11]
+나이 = 사망
+장 = 제10장 · 마지막 날
+제목 = 이걸로 끝이야
+본문 =
+@엔딩 관계 | 병실에 사람이 너무 많아서 간호사가 두 번이나 주의를 줬다. 후배, 제자, 식구들. 나는 그저 웃고 있었다.
+@엔딩 자아실현 | 병실 창가에 내가 깎은 나무 블록들과 수많은 감사패들이 놓여 있다. 손이, 귀가 기억하는 것들. 아무도 모르지만, 나는 안다. 그걸로 됐다.
+@엔딩 도덕 | 장문의 문자가 매년 오지만, 올해는 이상하게도 유독 많은 사람들에게 고맙다는 이야기를 들었다. 상은 못 받았지만 서류는 남았다. 몇몇 사람들이 내 병상에 와 흐느끼기 시작했다.
+@엔딩 생산성 | 조용했다. 잔고가 넉넉해서 1인실이었다. 벽걸이 화면이 "괜찮으신가요" 하고 물었다. 나는 대답하지 않았다. 대답할 사람이 없기도 했고.
+@엔딩 동점 | 뭐가 남았는지 끝내 세지 못했다. 그래도 괜찮았다. 세는 건 남은 사람들 몫이다.
+선택 =
+1. 눈을 감는다. | | 다음 끝
+
+
+# ============================================================
+#  엔딩 — 마지막에 가장 높은 게이지가 정함 (동점이면 '동점' 엔딩)
+#  그림: l1 집과 나무 · l2 교실 · l3 들판 · l4 밤의 집 · room 방
+# ============================================================
+
+[엔딩 관계]
+제목 = 찾아오는 사람
+조건 = 관계 최고
+그림 = l2
+묘비 = 그리워할거에요, OOO
+본문 =
+더는 출근하지 않는다. 그런데 전화가 온다. 후배가, 제자가, 식구가. "이거 어떻게 생각하세요?"
+AI는 언제나 나보다 빨리, 그리고 정확하게 답을 냈다. 그래도 사람들은 굳이 나한테 물었다.
+내 노동이 남긴 건 수율이나 생산성이 아니라고 생각한다. 굳이 따지자면 나를 찾아오는 사람들이 아닐까? 이정도면 완전 잘 살았지.
+
+[엔딩 자아실현]
+제목 = 자기효능감 100%
+조건 = 자아실현 최고
+그림 = l3
+묘비 = 이왕 살 거면 이렇게
+본문 =
+끝까지 손으로, 귀로 해보는 사람으로 남았다. 효율로는 AI한테 매번 졌다. 한 번도 못 이겼다.
+그런데 왜 되는지, 왜 안 되는지를 몸으로 아는 사람은 나뿐이었다.
+일이 나한테 준 건 돈이 아니라(돈도 좀 주긴 했지만), 내가 누구인지 아는 감각이었다.
+
+[엔딩 도덕]
+제목 = 하늘을 우러러 한 점 부끄럼 없기를
+조건 = 도덕 최고
+그림 = l4
+묘비 = 당신은 최고였어요, OOO	
+본문 =
+내가 남긴 건 수동 승인 한 건, 라인을 세운 사유서 한 장, 고쳐 쓴 보고서 한 통이었다. 아무도 상을 주지 않았다. 고과는 늘 낮았다.
+하지만 절대로 속으로 불편하거나 힘들지는 않았다.
+내가 소신을 가지고 내 스스로에 떳떳했기 때문에! 
+
+[엔딩 생산성]
+제목 = 스위치
+조건 = 생산성 최고
+그림 = l1
+묘비 = 편히 쉬세요
+본문 =
+번 돈으로 집을 샀다. 퇴직 다음 날, 시스템은 아무 일 없이 돌아갔다. 
+아이는 아직도 내가 무슨 일을 했는지 모른다. 나도 설명할 말을 못 찾았다.
+나는 일을 정말 많이 했다. 덕분에 우리 회사도, 나도 성장을 많이할 수 있었다. 그렇지만 가끔씩은 좀 쓸쓸할지도.
+
+[엔딩 동점]
+제목 = 아직
+조건 = 최고 게이지 동점
+그림 = room
+묘비 = 아직 답을 찾던 사람.
+본문 =
+뭐가 남았는지 끝내 말하지 못했다.
+어쩌면 그게 답일지도 모른다. 뭐가 나한테 가치 있는 일인지는, 누가 대신 정해주는 게 아니었다.
+끝까지 스스로 판단해야 하는 거였다. 38년 걸려서 알아낸 게 이거라니.
+
+</script>
+<script>
+/* ============================================================
+   시나리오는 "시나리오.txt"에 있습니다. 이 스크립트는 그 파일을 읽어
+   게임을 구성하는 엔진입니다. (파일을 못 읽으면 아래 <script id="scn">에
+   내장된 복사본을 씁니다.)
+   ============================================================ */
+const SPR = {"person": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAB4CAYAAABRl7TqAAAACXBIWXMAAAPoAAAD6AG1e1JrAAABvUlEQVR4nO2cwW0DMQwEt46UIBjIP+wsL7/ZyNV01TCfvE0EiqK93Cyg/2iwpGUYsLQ4Md5q5dHVEwh6HQQ1QVATBDVBUBMENUFQEwQ1QVATBDW5naBYfOHLCw2DSyJoIKho0Ng/TuyggaCiQYMRq917h3fQQFDRoHHTETuPz6UHQQeCigYdjFixg77Dkm4SfIohaCpBgxA0laBBCJpK0CAETSVoEIKmEjQIQVMJGoSgqQQNQtBUggYh6E9zLv5dTFfPiaDXQVATBDVBUBMENUFQEwQ1QVATBDVBUJPbCRr5rCsfBCWCigYlI1bsoNy/kFnSiaCiQcmI1e69w0MxEVTbGrS78sP8ICgRVDQoGbFiB+X+hcySTgQVDUpGrHbvHR6KiaD6tQbd7bubVmcYXBJBiaCiQbl/nNhBiaCiQcmI1e69wzsoEVQ0KP/JiD3eP+on5248cgNy45EbkBuP3IDceOQG5MYjNyA3HrkBufHIDciNR25AbjxyA3LjkRuQG4/cgNx45PYf8m48cgNy45EbkBuP3IDceOQG5MYjNyA3HrkBufHIDciNR25AbjxyA3LjkRuQG4/cgFbzfAHc8TVKzxq+7AAAAABJRU5ErkJggg==", "heart": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGIAAABUCAYAAAB5huK+AAAACXBIWXMAAAPoAAAD6AG1e1JrAAABf0lEQVR4nO2asW3FUAwDtS13eWNykWSBVEHwSSlHwD11J7kwPPPLWO/rk88c7znXB/SSnnN9QC/pOdcH9JKec31AL+k51wf0kp5zfUAv6TnXB/SSnnN9QC/pOdcH9JKec31AL+k51wf0kp5zfUAv6TnXB/SSnh8vyvN+FgiYV7EciFBeAiKUF4AI5eEjQnnwiFAeOiKUB44I5WEjQnnQiFAeMiKUB4wI5eEiQnmwiFAeKiKUB4oI5WEiQnmQiFAeIiKUB4gI5eEhQnlwiFAeGiKUB4YI5WEhQnlQiFAeEiL0j0Twz+zrAIqIh4j068BNrxgu4iEivb3mIvLAjIg8LCMiD8qIyEMyIvKAjIg8HCMiD8aIyEMxIvJA/F9EXP80MteTBmxEIKIq6U03F4GIqqQ33VwEIqqS3nRzEYioSnrTzUUgoirpTTcXgYiqpDfdXERG4JC/jRHRESOiI0ZER4yIjhgRHTEiOmJEdMSI6IgR0REjoiNGREeMiI74uIhv/0hQfzprFoEAAAAASUVORK5CYII=", "dog": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABICAYAAABof9IhAAAACXBIWXMAAAPoAAAD6AG1e1JrAAABQElEQVR4nO2XwQ3DMAwDPVKmKDxFBtAs3Nmdoa0KkcgJ8J93YKx43a/rfHJW+Nz/5kXohdBfhoY2D0KbB6HNg9DmQWjzILR5ENo8CG0ehKYJVe2TfJYZL0ILoYeGFp/8+N0o7lCEspSKLX/4bSru0PFFI5YSQsVLafP0VMCVEv+WF0L3uCQaWgg9082ioeV5WEqF0DPdQhpaCD3TTaOhNS+TpVQGQp/2VF1uMy1ECN3jEmloIXS8eaKhG6EspT/M9CcrPvk9LpEtXwgdb55o6EboN0tpPSxPPIDM8sQDyCxPPIDM8sQDyCxPPIDM8sQDyCxPPIDM8sQDyCxPPIDM8sQDyCxPPIDM8sQDyCxPPIDM8sQDyCxPPIDM8sQDyCxPPIDM8sQDyCxPPIDM8sQDyCxPPIDM8sQDyCxPPIDM8rwBBR89Nq2XXEEAAAAASUVORK5CYII=", "flag": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAABICAYAAACwc3YrAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAApklEQVRoge2YQQ3AMAzECmko+goGUyyFMMsw7LPbJFsqgMhtculiX/PkVJ9PnWUBrYHxCuEjPnahso1uB9k4idsocRnmyjR6jNPjQtNuZONKiUv98Vei/vitsp5iAa2B8QrhIz52obKNbgfZOIn7hSixvgYWEAYNhEEDYdBAGDQQBg2EQQNh0EAYNBAGDYRBA2HQQBg0EAYNhEEDYdBAGDQQhp8buAERb24v/LfQ1wAAAABJRU5ErkJggg==", "star": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAwElEQVRoge2WwY0EIAzEaDNVUo+rydaQ1eV2kGyJP5EzDOcsw62enPM6OHBpGFf6YTDDZYYxww+DGS4zTHKGGa7o9nHgv4YAqxrehACrGt6EAKsa3oQAqxrehACrGp5AgKV/3QgCLuHAV8PtSl8z3D5a11e6rSUCutJautZSf11LU54fYMqvB3TgbQiw6kpvQoBVDW9CgFUNb0KAVQ1vwuuGSVuh7fvjwKVhXOkczPD10Wpfaezh8uOBP60TwbSWPgeHpUvCNj5/AAAAAElFTkSuQmCC", "candleOn": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAABkCAYAAADE6GNbAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA50lEQVR4nO3XsQ0CMRBEUddBCbTgHqjxWqEVEmcTLAHhUMGNHCBug/8l56zmXsAYP66eD++80b3ikGYVizSrWKRZxSLNqu6L1OYP/Kxj6112cHHIwSLFpxXCyMKIMZLCyMKIMZLCyMKIMZLCyMKIL/1vP+8377zRvckhzZos0qzJIs2aLNKs2X2Rt16+4g0OOYlFxKdljKQwIowYIymMCCPGSAojwogxksKIMGKMpDAijBgjKYwII8ZICiPCiDGSwogwYoykMCKMGCMpjAgjxkgKI8KIMZLCiDBijKQwIowYIymM6D9GvsxwmP6ifCdjAAAAAElFTkSuQmCC", "candleOff": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAABkCAYAAADE6GNbAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAApElEQVR4nO3TQQ1CMRRE0epAAhZq/xuYHW4GBf+FFZTknOQJaKZ3LQAAAAAA4M/s56Of3Drd9pDDbIscZlvkMNsih9mnL/LK1V/c8pAbFomvVY1MNBKNVCMTjUQj1chEI9FINTLRSDRSjUw0Eo1UIxONRCPVyEQj0Ug1MtFINFKNTDQSjVQjE41EI9XIRCPRSDUy0Ug0Uo1MNBKNVCMTjeQ7jbwB9GqmAY8NFCMAAAAASUVORK5CYII=", "tree": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABgCAYAAACDgFV6AAAACXBIWXMAAAPoAAAD6AG1e1JrAAABUklEQVR4nO3ZwW0DQRADwctnPo7Czw2BgTD5UQwGrCNPagL6240arQFf15s3Ptv0uZ6+KYhIUBMUoXdtCs6ckzdBEXrXpuDMOXkTFKF3bQrOnJP3FwVNC5tPE53+BYegJx4Foc6H5ORN0E3rQ6gJumlhCHU+Io+SCbppeQj1Q4KmBcyHfQhqgm5aIUJN0E1LQ6jzMXmUTNBNC0SoCbppZQh1PiSPkgm6aX0INUE3LQyhzkfkUTJBNy0PoSbopnUh1PmAPEom6KbVIdTBoPwf//xvIIIegk7zCSP0EHQQeuJ/znDyzsfkO9QE3bRAhJqgm1aGUH/Ro/Tu6fdn//JJ/7z1E0EJWj0hlKDVE0IJWj0hlKDVE0IJWj0hlKDVE0IJWj0hlKDVE0IJWj0hlKDVE0IJWj0hlKDVE0IJWj0hlKDVE0IJWj0hlKDVE0IJWj09XOgLIGShUUiuJswAAAAASUVORK5CYII=", "house": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGwAAABgCAYAAAD4pJe2AAAACXBIWXMAAAPoAAAD6AG1e1JrAAAB4UlEQVR4nO2awW3DMBAErx//VURKyC8dXk0sIJ8rwKkgAQKE2aE8A+zf3tVQAKEqGH09njtT4mAvjYYdhoMdhoMdhoMdhoMdhoMdhoMdhoMdhoMdhoPdfID27tHB+pUvi9OGtLf7DnZr0oa0hjnYrUkb0hrmYLcmbUhrmIPdmrQhrWEOdhTpJ77hKRrpQhqeopEupOEpGulCGp6ikS6k4Ska6UIanqKRLqThKRrpQhqeopEupOEpGulCGp6ikS6k4Ska6UIaHgcAjNCkgdM/+NVTDvaIj+BggGLbwfJlNSAeiVd+BAcDFNsOli+rAfFIvPIjOBig2HawfFkNiEfidfPBfst8rqdZ33ZQNBxr/fjAFg0HWw52p4egaKQLGXiKRrqQgadopAsZeIpGupCBp2ikCxl4ika6kIGnaKQLGXiKRrqQgado7P7Db+8fWzMO5mCjYRr2Z3gkLt9hvsM2omFLwzRsIxq2NEzDNqJhS8M0bCMatjRMwzaiYUvDNGwjGrY0TMM2omFLwzRsIxq2NEzDNqJhS8M0bCMatjQs/fHn+CFpvrhxsP85Ek9P0UgXMvAUjXQhA0/RSBcy8BSNdCEDT9FIFzLwFI10IQNP0UgXMvAUjXQhA0/RSBcy8Ozu/wu3fgebVfqiVgAAAABJRU5ErkJggg==", "room": "data:image/png;base64,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", "l1": "data:image/png;base64,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", "l2": "data:image/png;base64,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", "l3": "data:image/png;base64,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", "l4": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYAAAADACAYAAAAN6LRnAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAJ4klEQVR4nO3dP44dVRTEYa8DibAl6woJpM74o5OxBwhI2YvFIrwD1sESSJ04IyF4oVnBDPJ7btV593xBpfaozq+r+nT3nXlzvK1PxAMMYAADNc6DN+kfgHiAAQxgoBQACAQBBjCAgbIBgEAQYAADGCiPgEAgCDCAAQyUdwAgEAQYwAAGyktgEAgCDGAAA+UrIBAIAgxgAAPlM1AQCAIMYAAD5RwACAQBBjCAgXIQDASCAAMYwEA5CQwCQYABDBzDPfCrIBoMgXiAAQwcCgAEggADGMDAYQMAgSDAAAYwcHgEBAJBgAEMYODwDuDLQvD3n7+8Khediw4DGDg29WD8S2AFkIeQeICBUgAJCBSA8BE+GDiGemAD8AgoDiHxAAOlAGwAgkAQYAADZQPwCEgQCAIMYKA8AvIOQBAIAgxgoLwD8BJYEAgCDGCgvAT+El/5PCogCiMMzGXg9vH9q0r/fMf0r4AUQH4GxINdGbgpgPwQFEDeZ+LBRAZuCiA/BAWQ95l4MJGBmwLID0EB5H0mHkxk4KYA8kNQAHmfiQcTGbgpgPwQFEDeZ+LBRAZuCiA/BAWQ95l4MJGBmwLYO+CdE3ABpUOGeHBc5MHTnwNIB7yDYrPvoIgHxxN7oAAUQBRABZAPAaqxHigABaAAGlyIxINDAXw+BOlHPB4BPXbh2gAEn/IrG8C9EKQDXgEoAAGmxI4n9cAjIAXgEVCDC5F4cCgAG8C0IPAIKD8DqrEePP0G8H9yh5+fAfEAA9XSAwXgGX8cQuIBBkoB2AAEgSDAAAbKBuARkCAQBBjAQHkE5B2AIBAEGMBAeQfgJbAgEAQYwEB5CewrIEEgCDCAgfIVkM9ABYEgwAAGatZnoOlfxZD+/4kHGMDAcacHCkABCBABgoG3Mz1QAAogDiHxAAOlAJ7xEUz6/yceYAADhw1AAQgCQYABDBweAdkABIEgwAAGDu8APAISBIIAAxg4vAT2DkAQCAIMYODY5Ssg4gEGcgz4gz711PwpgAZDIB48KwMKoOIzUAANjCQeTGRAAVR8BgqggZHEg4kMKICKz0ABNDCSeDCRAQVQ8RkogAZGEg8mMqAAKj4DBdDASOLBRAYUQMVnoAAaGEk8mMiAAsjPQAE0MJJ6evDH1z8+pPTPv7t++/m7h5T++Y8nl3MADYZA13mgAHrzpQBKAaQhpH09UAD5GSiAaisbQIMhkAKYyoANoBRAGkLa1wMbQH4GCqDaygbQYAikAKYyYAMoBZCGkPb1wAaQn4ECqLayATQYAimAqQzYAEoBpCGkuXf4NoTeAa8g6tL52AAahBgpgF0ZUAAVn4ECaGA0XeOBDaA3Wwqg4jNQAA2MJgUwkQEFUPEZKIAGRpMCmMiAAqj4DBRAA6NJAUxkQAFUfAYKoIHRpAAmMqAAKj4DBdDAaFIAExlQABWfgQJoYDQ951c+zglcWwB/vfv1Ifl7AaUAhOu+BZMOcAWgAI6N5SBYgyGQAtiVARtAxWegABoYTfd5kL6DtwEogGPj69cG0GAIpAB2ZcAGUPEZKIAGRtN9HqTv4G0ACuDY+Pq1ATQYAimAXRmwAVR8BgqggdF0nwfpO3gbgAI4Nr5+bQANhjBZ6YBOK+3/1bIBVGspgAZDmKx0AKeV9v9qKYBqLQXQYAiTlQ7gtNL+Xy0FUK2lABoMYbLSAZxW2v+rpQCqtRRAgyFMVjqA00r7f7UUQLWWAmgwhMlKB3Baaf+vlgKo1lIADYYwWekATivt/9VSANVaCqDBECYrHcBppf2/WgqgWksBNBgCvezBv/98eGqZ7et8P/r3APhbCgAE+5ZIOsAVwLXzVQAVvb5sAA1CjhTAVAYUQCmANITU14P0HbwNQAEcG8sG0GAIpACmMmADKAWQhpD6epC+g7cBKIBjY9kAGgyBFMBUBmwApQDSEFJfD9J38DYABXBsLBtAgyHQdQVw+/j+ISmAx/j88Pu7qFxbpQBA8LwlowDyM1AAta1sAA2GQApgVwZsABWfgQJoYDTd54EN4LnZUQAVn4ECaGA0KYCJDCiAis9AATQwmhTARAYUQMVnoAAaGE0KYCIDCqDiM1AADYwmBTCRAQVQ8RkogAZGkwLYkYF0wDsnUAogfRHQdR74Cqg3X+kAVwClANIXASmAl4pqdzbSAa4ASgGkLwJSAArgOXUMv36dBG4wBHrZA4+AevORDnAFUAogfRHQdR4ogN58pQNcAZQCSF8EpAA8AsqHuUdA9dlZ5BGQAG9dYDaA/AxsALWtFECDIdB1BZDW9Nm6w6/WUgANhkAve5AOcAWgAI6Nr1EF0GAIpAB2ZcAGUPEZKIAGRtN9HqTv4G0ACuDY+Pq1ATQYAimAXRmwAVR8BgqggdF0nwfpO3gbgAI4Nr5+bQANhkAKYFcGbAAVn4ECaGA03edB+g7eBqAAdr5236yfzk/EAwxg4AoGvvn2+1fV/d9fm0sBNBgC8WBXBhTAGZ+BAmhgNPFgIgMK4IzPQAE0MJp4MJEBBXDGZ6AAGhhNPJjIgAI44zNQAA2MJh5MZEABnPEZKIAGRhMPJjKgAM74DBRAA6OJBxMZUABnfAYKoIHRxIOJDPywvnpV3f/9tbmcA2gwBOLBrgwogDM+AwXQwGjiwUQGFMAZn4ECaGA08WAiAwrgjM9AATQwmngwkQEFcMZnoAAaGE08mMiAAjjjM1AADYwmHkxkQAGc8RkogAZGEw8mMqAAzvgMFEADo4kHGMDAauaBcwANhkA8wAAGlgIAgSDAAAYwsGwAIBAEGMAABpZHQCAQBBjAAAaWdwAgEAQYwAAGlpfAIBAEGMAABpavgEAgCDCAAQwsn4GCQBBgAAMYWM4BgEAQYAADGFgOgoFAEGAAAxhYTgKDQBBgAAPnaA/8KogGQyAeYAADSwGAQBBgAAMYWDYAEAgCDGAAA8sjIBAIAgxgAAPLOwAQCAIMYAADy0tgEAgCDGAAA8tXQCAQBBjAAAaWz0BBIAgwgAEMLOcAQCAIMIABDCwHwUAgCDCAAQwsJ4FBIAgwgIFztAd+FUSDIRAPMICBpQBAIAgwgAEMLBsACAQBBjCAgeUREAgEAQYwgIHlHQAIBAEGMICB5SUwCAQBBjCAgeUrIBAIAgxgAAPLZ6AgEAQYwAAGlnMAIBAEGMAABpaDYCAQBBjAAAaWk8AgEAQYwMA52gO/CqLBEIgHGMDAUgAgEAQYwAAGlg0ABIIAAxjAwPIICASCAAMYwMDyDgAEggADGMDA8hIYBIIAAxjAwPIVEAgEAQYwgIHlM1AQCAIMYAADyzkAEAgCDGAAA8tBMBAIAgxgAAPLSWAQCAIMYOAc7YFfBdFgCMQDDGBgKQAQCAIMYAADywYAAkGAAQxgYF3owX/xXWr01yTbAAAAAABJRU5ErkJggg=="};
+const GAUGES = { self: "자아실현", prod: "생산성", moral: "도덕", bond: "관계" };
+const GKEY = { "자아실현": "self", "자아": "self", "self": "self", "생산성": "prod", "생산": "prod", "prod": "prod", "도덕": "moral", "moral": "moral", "관계": "bond", "유대": "bond", "bond": "bond", "동점": "tie", "tie": "tie", "재산": "money", "돈": "money", "money": "money" };
+const SCENARIO_FILES = ["시나리오.txt", "scenario.txt"];
+
+/* 설정값 (시나리오 [설정]에서 덮어씀) */
+let CFG, PROLOGUE, NODES, ENDINGS, START, BIRTH, AGE_MIN, AGE_MAX, MAXDEPTH, GMAX = 10, USE_MONEY = false, START_MONEY = 0;
+/* 재산: 단위 만원. 네 가치 게이지와 달리 엔딩 결정에는 쓰이지 않고, 그 사람에게 남은 돈을 보여주는 지표 */
+function fmtMoney(v) {
+  const neg = v < 0, a = Math.abs(Math.round(v)), eok = Math.floor(a / 10000), man = a % 10000;
+  let s = eok ? `${eok}억` : ""; if (man) s += (s ? " " : "") + man.toLocaleString("ko-KR") + "만"; if (!s) s = "0";
+  return (neg ? "−" : "") + s;
+}
+const yearOf = a => BIRTH + a;
+
+/* ---------- 시나리오 파서 ---------- */
+function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function rich(s) {
+  return esc(s)
+    .replace(/\{([^}]+)\}/g, "<span class='ai'>$1</span>")
+    .replace(/"([^"\n]+)"/g, "<q>$1</q>")
+    .replace(/“([^”\n]+)”/g, "<q>$1</q>");
+}
+function parseFx(s, errs, where) {
+  const fx = {};
+  if (!s || !s.trim()) return fx;
+  for (const part of s.split(/[,，]/)) {
+    const m = part.trim().match(/^(\S+)\s*([+\-－＋]?\s*\d+)$/);
+    if (!m) { errs.push(`${where}: 게이지 표기를 읽을 수 없음 → "${part.trim()}" (예: 관계 +2)`); continue; }
+    const k = GKEY[m[1]];
+    if (!k || k === "tie") { errs.push(`${where}: 모르는 게이지 이름 "${m[1]}" (자아실현/생산성/도덕/관계/재산)`); continue; }
+    fx[k] = (fx[k] || 0) + parseInt(m[2].replace(/[\s＋]/g, "").replace("－", "-"), 10);
+  }
+  return fx;
+}
+function parseScenario(text) {
+  const errs = [], cfg = {}, prologue = [], nodes = {}, endings = {};
+  const lines = text.replace(/^﻿/, "").replace(/\r\n?/g, "\n").split("\n");
+  let sec = null, cur = null, field = null; // field: 본문 | 선택
+  const flush = () => {};
+  lines.forEach((raw, idx) => {
+    const ln = idx + 1, line = raw.replace(/\s+$/, "");
+    if (!line.trim() || line.trim().startsWith("#")) return;
+    const sm = line.match(/^\[\s*(설정|프롤로그|노드|엔딩)\s*([^\]]*)\]\s*$/);
+    if (sm) {
+      const kind = sm[1], id = sm[2].trim(); field = null;
+      if (kind === "설정") { sec = "cfg"; cur = cfg; }
+      else if (kind === "프롤로그") { sec = "pro"; cur = prologue; }
+      else if (kind === "노드") { if (!id) errs.push(`${ln}행: [노드 이름]에 이름이 없음`); sec = "node"; cur = nodes[id] = { id, text: [], choices: [], ln }; }
+      else { const k = GKEY[id] || id; if (!GKEY[id]) errs.push(`${ln}행: 엔딩 이름 "${id}" — 관계/자아실현/도덕/생산성/동점 중 하나`); sec = "end"; cur = endings[k] = { key: k, text: [], ln }; }
+      return;
+    }
+    if (!sec) { errs.push(`${ln}행: 어느 구역([설정]/[노드 …] 등)에도 속하지 않은 줄`); return; }
+    if (sec === "cfg") { const m = line.match(/^([^=]+?)\s*=\s*(.*)$/); if (m) cfg[m[1].trim()] = m[2].trim(); else errs.push(`${ln}행: [설정] 줄은 "키 = 값" 형식`); return; }
+    if (sec === "pro") {
+      const p = line.split("|").map(s => s.trim());
+      const a = parseInt(p[0], 10);
+      if (isNaN(a)) { errs.push(`${ln}행: 프롤로그 줄은 "나이 | 문장 | 가치표시" 형식`); return; }
+      prologue.push({ a, t: rich(p[1] || ""), v: p[2] || "", now: (p[3] || "").includes("현재") });
+      return;
+    }
+    // 노드 / 엔딩
+    const km = line.match(/^(나이|장|제목|멈춤|자료|조건|그림|묘비|마지막날|본문|선택)\s*=\s*(.*)$/);
+    if (km && !(field === "본문" && !km) ) {
+      const k = km[1], v = km[2].trim();
+      if (k === "본문") { field = "본문"; if (v) cur.text.push(v); return; }
+      if (k === "선택") { field = "선택"; return; }
+      field = null; cur[k] = v; return;
+    }
+    if (field === "본문") { cur.text.push(line.trim()); return; }
+    if (field === "선택") {
+      const cm = line.trim().match(/^(\d+)[.)]\s*(.*)$/);
+      if (!cm) { errs.push(`${ln}행: 선택지는 "1. 내용 | 게이지 | 다음 노드" 형식`); return; }
+      const p = cm[2].split("|").map(s => s.trim());
+      const c = { t: rich(p[0] || ""), fx: parseFx(p[1], errs, `${ln}행`), next: null };
+      for (const extra of p.slice(2)) {
+        const em = extra.match(/^(다음|표시|경로)\s+(.+)$/);
+        if (!em) { if (extra) errs.push(`${ln}행: 모르는 항목 "${extra}" (다음/표시/경로)`); continue; }
+        if (em[1] === "다음") c.next = (em[2] === "끝" || em[2].toUpperCase() === "END") ? "END" : em[2];
+        else if (em[1] === "표시") c.flag = em[2];
+        else c.path = em[2];
+      }
+      if (!c.next) errs.push(`${ln}행: 선택지에 "다음 노드이름"이 없음`);
+      cur.choices.push(c); return;
+    }
+    errs.push(`${ln}행: 이 줄을 어디에 넣을지 알 수 없음 → "${line.trim().slice(0, 30)}"`);
+  });
+
+  /* 본문 줄 → 조건부 줄 분리 */
+  const compileText = (arr, where) => arr.map(s => {
+    const m = s.match(/^@(경로|엔딩)\s+(\S+)\s*\|\s*(.*)$/);
+    if (!m) return { html: rich(s) };
+    if (m[1] === "경로") return { path: m[2], html: rich(m[3]) };
+    const k = GKEY[m[2]]; if (!k) errs.push(`${where}: @엔딩 뒤의 이름 "${m[2]}"을 모름`);
+    return { ending: k, html: rich(m[3]) };
+  });
+  for (const n of Object.values(nodes)) {
+    n.text = compileText(n.text, `[노드 ${n.id}]`);
+    if (!n.choices.length) errs.push(`[노드 ${n.id}]: 선택지가 하나도 없음`);
+    if (n["나이"] !== "사망" && isNaN(parseInt(n["나이"], 10))) errs.push(`[노드 ${n.id}]: 나이가 없거나 숫자가 아님 (숫자 또는 "사망")`);
+    n.age = n["나이"] === "사망" ? "death" : parseInt(n["나이"], 10);
+    n.ch = n["장"] || ""; n.title = n["제목"] || n.id; n.pause = n["멈춤"]; n.ref = n["자료"] ? rich(n["자료"]) : "";
+    for (const c of n.choices) if (c.next !== "END" && !nodes[c.next]) errs.push(`[노드 ${n.id}]: "다음 ${c.next}" — 그런 노드가 없음`);
+  }
+  for (const e of Object.values(endings)) {
+    e.title = e["제목"] || e.key; e.cond = e["조건"] || ""; e.pic = e["그림"] || "l1"; e.epitaph = e["묘비"] || ""; e.text = e.text.map(rich);
+    if (!SPR[e.pic]) errs.push(`[엔딩 ${e.key}]: 그림 "${e.pic}" 없음 (l1~l4, room)`);
+  }
+  for (const k of ["self", "prod", "moral", "bond", "tie"]) if (!endings[k]) errs.push(`엔딩 [엔딩 ${{ self: "자아실현", prod: "생산성", moral: "도덕", bond: "관계", tie: "동점" }[k]}]이 없음`);
+  const startNode = cfg["시작노드"] || "n1";
+  if (!nodes[startNode]) errs.push(`시작 노드 "${startNode}"이 없음 ([설정] 시작노드 확인)`);
+  return { cfg, prologue, nodes, endings, errs, startNode };
+}
+
+function applyScenario(d) {
+  CFG = d.cfg; PROLOGUE = d.prologue; NODES = d.nodes; ENDINGS = d.endings;
+  START_MONEY = parseInt(CFG["시작재산"] || 0, 10); USE_MONEY = ("시작재산" in CFG) || Object.values(d.nodes).some(n => n.choices.some(c => "money" in c.fx));
+  GMAX = Math.max(1, parseInt(CFG["게이지최대"] || 10, 10)); BIRTH = parseInt(CFG["출생년도"] || 1999, 10); AGE_MIN = parseInt(CFG["시작나이"] || 35, 10); AGE_MAX = parseInt(CFG["연표끝"] || 85, 10);
+  START = { self: 3, prod: 2, moral: 4, bond: 1 };
+  const sg = parseFx(CFG["시작게이지"] || "", [], "시작게이지"); for (const k in sg) START[k] = sg[k];
+  CFG.deathBase = parseFloat(CFG["사망기본"] || 77); CFG.deathMul = parseFloat(CFG["사망관계배수"] || 0.6); CFG.deathMax = parseFloat(CFG["사망최대추가"] || 6);
+  CFG.startNode = d.startNode;
+  CFG.map = (CFG["지도"] || "27:s0:休, 28:s1:알, 30:s1:취, 34:s1:거, 35:s3:AI, 38:s2, 60:s4:퇴").split(/[,，]/).map(s => s.trim().split(":")).map(p => ({ a: parseInt(p[0], 10), s: p[1] || "s0", ch: p[2] || "" })).filter(p => !isNaN(p.a)).sort((x, y) => x.a - y.a);
+  // 가장 긴 결정 경로 길이 (진행 막대용)
+  const depth = (id, seen) => { if (id === "END" || !NODES[id] || seen.has(id)) return 0; seen.add(id); let m = 0; for (const c of NODES[id].choices) m = Math.max(m, depth(c.next, new Set(seen))); return 1 + m; };
+  MAXDEPTH = Math.max(1, depth(CFG.startNode, new Set()));
+}
+function deathAge(g) { return Math.round(CFG.deathBase + Math.min(CFG.deathMax, g.bond * CFG.deathMul)); }
+function stageOf(age) {
+  let st = { s: "s0", ch: "" }, mark = "";
+  for (const p of CFG.map) { if (age >= p.a) { st = p; mark = age === p.a ? p.ch : ""; } }
+  return [st.s, mark];
+}
+
+/* ---------- 시나리오 불러오기 ---------- */
+let SRC = { kind: "내장", name: "" };
+async function loadScenario() {
+  let text = null;
+  try { const imp = localStorage.getItem("lifegame2-scn"); if (imp) { const o = JSON.parse(imp); text = o.text; SRC = { kind: "가져온 파일", name: o.name || "" }; } } catch (e) {}
+  if (text == null) {
+    for (const f of SCENARIO_FILES) {
+      try { const r = await fetch(encodeURI(f), { cache: "no-store" }); if (r.ok) { text = await r.text(); SRC = { kind: "파일", name: f }; break; } } catch (e) {}
+    }
+  }
+  if (text == null) { text = document.getElementById("scn").textContent; SRC = { kind: "내장", name: "" }; }
+  return text;
+}
+function useText(text) {
+  const d = parseScenario(text);
+  applyScenario(d); SRC.errs = d.errs;
+  return d.errs;
+}
+function importFile(file) {
+  const rd = new FileReader();
+  rd.onload = () => {
+    try { localStorage.setItem("lifegame2-scn", JSON.stringify({ name: file.name, text: rd.result })); } catch (e) {}
+    SRC = { kind: "가져온 파일", name: file.name }; useText(rd.result); S = fresh(); hud.hidden = true; render(); save();
+  };
+  rd.readAsText(file, "utf-8");
+}
+function resetScenario() {
+  try { localStorage.removeItem("lifegame2-scn"); } catch (e) {}
+  loadScenario().then(t => { useText(t); S = fresh(); hud.hidden = true; render(); save(); });
+}
+
+
+/* ---------- 장례식 (재산 × 관계) ---------- */
+const FUNERAL_DEFAULT = {
+  tiers: ["조촐", "보통", "넉넉", "호화"],
+  hall:  ["동네 병원 지하 소실 · 1일장", "장례식장 일반실 · 3일장", "장례식장 특실 · 3일장", "대학병원 VIP실 · 3일장 · 추모 영상"],
+  wreath:[0, 2, 5, 10],
+  tierLine: [
+    "빈소는 동네 병원 지하 소실, 1일장. 화환은 없었다.",
+    "빈소는 장례식장 일반실, 3일장. 화환 두 개는 옛 회사 이름이었다.",
+    "특실이었다. 화환이 복도까지 늘어섰다. 반은 모르는 회사 이름이었다.",
+    "VIP실, 추모 영상에 생화 제단. 조화는 세다가 포기했다.",
+  ],
+  bondLine: [
+    "조문객은 가족뿐이었다. 방명록은 한 장을 못 넘겼다.",
+    "조문객은 점심 때 한 번, 저녁 때 한 번 몰렸다.",
+    "조문객은 사흘 내내 끊기지 않았다. 간호사가 주의를 줬던 그 사람들이다.",
+  ],
+};
+function wealthTier(m) {
+  const cuts = (CFG["재산구간"] || "5000, 15000, 30000").split(/[,，]/).map(s => parseInt(s, 10)).filter(n => !isNaN(n)).sort((a, b) => a - b);
+  let t = 0; for (const c of cuts) if (m >= c) t++; return Math.min(3, t);
+}
+function bondLevel(b) {
+  const cuts = (CFG["조문구간"] || "6, 12").split(/[,，]/).map(s => parseInt(s, 10)).filter(n => !isNaN(n)).sort((a, b) => a - b);
+  let t = 0; for (const c of cuts) if (b >= c) t++; return Math.min(2, t);
+}
+function funeralInfo() {
+  const tier = USE_MONEY ? wealthTier(S.money || 0) : 1, bl = bondLevel(S.g.bond);
+  const F = FUNERAL_DEFAULT, names = F.tiers;
+  const tierLine = CFG["장례문구_" + names[tier]] || F.tierLine[tier];
+  const bondLine = CFG["조문문구_" + ["적음", "보통", "많음"][bl]] || F.bondLine[bl];
+  const guests = Math.round(S.g.bond * 5 + tier * 3 + 2);
+  const notices = Math.round(S.g.bond * 25 + tier * 15 + 30);
+  return { tier, bl, name: names[tier], hall: CFG["빈소_" + names[tier]] || F.hall[tier], wreath: F.wreath[tier], guests, notices, tierLine, bondLine };
+}
+/* 픽셀풍 장례식장 그림 — 벽·제단은 재산, 조문객 수는 관계 */
+function funeralSVG(f) {
+  const W = 240, H = 150, tier = f.tier;
+  const wall = ["#3C3A3A", "#8F857A", "#B48A6A", "#E9E3D5"][tier], wall2 = ["#302E2E", "#7A7066", "#9B6E4E", "#CFC3AC"][tier];
+  const floor = ["#2A2626", "#5C5247", "#6B4A32", "#B9A98E"][tier];
+  const px = (x, y, w, h, c) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`;
+  let s = `<svg class="funeral" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${W} ${H}" shape-rendering="crispEdges" role="img" aria-label="장례식장">`;
+  s += px(0, 0, W, 110, wall) + px(0, 110, W, 40, floor);
+  for (let x = 0; x < W; x += 24) s += px(x, 0, 2, 110, wall2); // 벽 패널
+  if (tier === 3) { // 샹들리에 + 금테
+    s += px(0, 0, W, 4, "#D9AF59") + px(0, 106, W, 4, "#D9AF59");
+    s += px(118, 4, 4, 14, "#D9AF59") + px(104, 18, 32, 4, "#D9AF59");
+    for (const x of [104, 112, 120, 128, 132]) s += px(x, 22, 4, 6, "#FFF1B8");
+  }
+  if (tier === 0) s += px(170, 14, 54, 18, "#555") + `<text x="197" y="27" font-size="8" text-anchor="middle" font-family="IBM Plex Mono, monospace" fill="#CFCFCF">B1 소실</text>`;
+  // 제단
+  const altarW = [60, 80, 100, 120][tier], ax = (W - altarW) / 2;
+  s += px(ax, 86, altarW, 24, ["#4A4040", "#6B5B4E", "#8B5A2B", "#F3EEE4"][tier]);
+  if (tier >= 2) s += px(ax, 86, altarW, 3, "#D9AF59");
+  // 국화
+  const mums = [3, 8, 16, 26][tier];
+  for (let i = 0; i < mums; i++) { const x = ax + 4 + (i * (altarW - 8)) / Math.max(1, mums - 1), y = 80 + ((i % 3) * 3); s += px(x - 2, y, 4, 4, "#F6F2E6") + px(x - 1, y + 1, 2, 2, "#E2B04C"); }
+  // 영정
+  const fw = 30, fh = 38, fx = (W - fw) / 2, fy = 44;
+  s += px(fx - 3, fy - 3, fw + 6, fh + 6, "#1A1A1A") + px(fx, fy, fw, fh, "#F1EADF");
+  s += `<image href="${SPR.person}" xlink:href="${SPR.person}" x="${fx + 6}" y="${fy + 4}" width="18" height="30" style="image-rendering:pixelated"/>`;
+  s += px(fx - 3, fy + fh + 3, fw + 6, 3, "#1A1A1A") + px(fx + 2, fy - 7, 26, 4, "#1A1A1A"); // 검은 리본
+  // 촛불 2
+  for (const cx of [fx - 16, fx + fw + 10]) s += `<image href="${SPR.candleOn}" xlink:href="${SPR.candleOn}" x="${cx}" y="70" width="8" height="16" style="image-rendering:pixelated"/>`;
+  // 화환
+  const wr = f.wreath;
+  for (let i = 0; i < wr; i++) {
+    const side = i % 2 === 0 ? -1 : 1, k = Math.floor(i / 2), col = Math.floor(k / 2), row = k % 2;
+    const x = W / 2 + side * (altarW / 2 + 14 + col * 20) - 8, y = row === 0 ? 68 : 56;
+    s += px(x, y, 16, 16, "#2F6B45") + px(x + 4, y + 4, 8, 8, "#F6F2E6") + px(x + 6, y + 6, 4, 4, "#E2B04C") + px(x + 6, y + 16, 4, 20, "#7A4E8C") + px(x + 5, y + 20, 6, 10, "#F6F2E6");
+  }
+  // 조문객
+  const guests = Math.min(11, Math.round(S.g.bond / 2) + f.tier - 1);
+  for (let i = 0; i < Math.max(0, guests); i++) { const x = 12 + i * 20 + (i % 2) * 4, y = 112 + (i % 2) * 8; s += `<image href="${SPR.person}" xlink:href="${SPR.person}" x="${x}" y="${y}" width="14" height="24" style="image-rendering:pixelated"/>`; }
+  if (guests <= 1) s += `<text x="${W - 8}" y="142" font-size="8" text-anchor="end" font-family="IBM Plex Mono, monospace" fill="${tier >= 2 ? "#7A6A50" : "#9A9A9A"}">방명록 1쪽</text>`;
+  return s + `</svg>`;
+}
+
+/* ============================================================
+   엔진
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const card = $("#card"), hud = $("#hud");
+let S;
+
+function fresh() {
+  return { screen: "cover", node: CFG.startNode, age: AGE_MIN, g: { ...START }, money: START_MONEY, hist: [{ age: AGE_MIN, g: { ...START } }], log: [], flags: [], path: "", pro: 0, name: "", showFx: false, candles: 0, death: null };
+}
+function save() { try { localStorage.setItem("lifegame2", JSON.stringify(S)); } catch (e) {} }
+function pickEnding(st) {
+  const g = (st || S).g;
+  const sorted = Object.keys(GAUGES).map(k => [k, g[k]]).sort((a, b) => b[1] - a[1]);
+  return sorted[0][1] === sorted[1][1] ? "tie" : sorted[0][0];
+}
+function nodeAge(n) { return n.age === "death" ? (S.death || deathAge(S.g)) : n.age; }
+function nameOr() { return S.name && S.name.trim() ? S.name.trim() : "당신"; }
+function nodeText(n) {
+  return n.text.filter(seg => (seg.path ? seg.path === S.path : true) && (seg.ending ? seg.ending === pickEnding() : true)).map(seg => seg.html);
+}
+
+function render(delta) {
+  card.className = "card fade";
+  if (S.screen === "cover") return renderCover();
+  if (S.screen === "regi") return renderRegi();
+  if (S.screen === "prologue") return renderPrologue();
+  if (S.screen === "end") return renderEnd();
+  if (!NODES[S.node]) { S = fresh(); return renderCover(); }
+  renderNode(delta);
+}
+
+/* ---------- 표지 ---------- */
+function srcLine() {
+  const label = SRC.kind === "파일" ? `시나리오.txt에서 읽음` : SRC.kind === "가져온 파일" ? `가져온 파일 · ${esc(SRC.name)}` : `내장 시나리오 (시나리오.txt를 찾지 못함)`;
+  const errs = SRC.errs || [];
+  return `<div class="src"><span>시나리오 출처 · ${label} · 노드 ${Object.keys(NODES).length}개 · 선택지 ${Object.values(NODES).reduce((a, n) => a + n.choices.length, 0)}개</span>
+    <span><label class="lnk">시나리오 파일 불러오기<input type="file" id="scnFile" accept=".txt,text/plain" hidden></label>${SRC.kind === "가져온 파일" ? ` · <button class="lnk" id="scnReset">파일 다시 읽기 / 내장으로</button>` : ""}</span></div>
+    ${errs.length ? `<div class="errs"><b>시나리오 오류 ${errs.length}건 — 고치면 사라집니다</b>${errs.slice(0, 12).map(e => `<div>· ${esc(e)}</div>`).join("")}${errs.length > 12 ? `<div>· … 외 ${errs.length - 12}건</div>` : ""}</div>` : ""}`;
+}
+function bindSrc() {
+  const f = $("#scnFile"); if (f) f.onchange = () => { if (f.files[0]) importFile(f.files[0]); };
+  const r = $("#scnReset"); if (r) r.onclick = resetScenario;
+}
+function renderCover() {
+  hud.hidden = true;
+  const nChoice = Object.values(NODES).reduce((a, n) => a + n.choices.length, 0);
+  card.innerHTML = `<div class="card-in cover">
+    <div class="sprites"><img class="px person" src="${SPR.person}" alt=""><img class="px heart" src="${SPR.heart}" alt=""><img class="px dog" src="${SPR.dog}" alt=""></div>
+    <div class="k">v6 · 발표 · 노동의 가치 · 기계공학과</div>
+    <div class="big">AI 이후의<br>인생<em>게</em>임</div>
+    <p class="lede story" style="font-size:17px">${esc(CFG["표지문구"] || `${AGE_MIN}세부터 눈을 감는 날까지, 선택할 때마다 네 가지 가치의 막대가 움직입니다. 어디서 태어날지는 고를 수 없었지만, 무엇을 가치 있는 일로 삼을지는 고를 수 있습니다.`)}</p>
+    <div class="counters">
+      <div class="counter"><b>${nChoice}</b><span>마주칠 선택지</span></div>
+      <div class="counter"><b class="pink">${Object.keys(ENDINGS).length}</b><span>갈라지는 엔딩</span></div>
+      <div class="counter"><b>${AGE_MIN}<span style="font-size:18px">~${Math.round(CFG.deathBase + CFG.deathMax)}</span></b><span>세 · 한 번뿐인 후반생</span></div>
+    </div>
+    <div class="topic"><span class="badge">오늘의 주제</span><span><b>노동의 가치</b> — 자아실현 · 생산성 · 도덕 · 그리고 AI 이후에 남는 것.</span></div>
+    <div class="next"><button class="btn" id="btnMap">엔딩 지도</button><button class="btn accent" id="btnStart">인사 기록 카드 →</button></div>
+    ${srcLine()}
+    <p class="hint">키보드 · 숫자키 선택 · Enter/Space 다음 · R 처음부터 · M 엔딩 지도 · 시나리오.txt 파일을 이 화면에 끌어다 놓아도 됩니다</p>
+  </div>`;
+  $("#btnStart").onclick = () => { S.screen = "regi"; render(); };
+  $("#btnMap").onclick = showMap; bindSrc();
+}
+
+/* ---------- 인사 기록 카드 ---------- */
+function renderRegi() {
+  hud.hidden = true;
+  const first = PROLOGUE[0] ? PROLOGUE[0].a : 27;
+  card.innerHTML = `<div class="card-in">
+    <div class="k"><b>출생 신고</b> · 발표자 소개</div>
+    <h2>인사 기록 카드</h2>
+    <p class="lede">게임 속 인물의 시작점입니다. 이름은 발표자 이름으로 바꿔도 됩니다.</p>
+    <div class="regi" style="position:relative">
+      <div class="head"><b>인사 기록</b><span class="no">No. KOR-${BIRTH}-00${AGE_MIN}</span></div>
+      <div class="body">
+        <div class="name"><input id="nameIn" value="${S.name.replace(/"/g, "&quot;")}" placeholder="이름" maxlength="10" autocomplete="off"><small>${BIRTH}년생 · ${yearOf(first)}년 현재 ${first}세</small></div>
+        <p class="desc">${esc(CFG["소개"] || `${BIRTH}년생. ${AGE_MIN - first}년 뒤, 이 사람의 선택이 시작된다.`)}</p>
+        <div class="grid3">
+          <div><small>나이</small><b>${first}세</b></div><div><small>병역</small><b>만기전역</b></div><div><small>학력</small><b>대졸 · 학점 2.5</b></div>
+          <div><small>직업</small><b>무직 1년차</b></div><div><small>주거</small><b>본가</b></div><div><small>시작 게이지</small><b class="mono" style="font-size:13px">자아 ${START.self} · 생산 ${START.prod} · 도덕 ${START.moral} · 관계 ${START.bond}</b></div>
+        </div>
+      </div>
+      <img class="px person" src="${SPR.person}" alt="">
+    </div>
+    <div class="next"><button class="btn" id="btnBack">← 표지</button><button class="btn accent wide" id="btnGo">지금까지의 이야기 →</button></div>
+  </div>`;
+  const inp = $("#nameIn"); inp.oninput = () => { S.name = inp.value; save(); };
+  inp.addEventListener("keydown", e => e.stopPropagation());
+  $("#btnGo").onclick = () => { S.screen = "prologue"; S.pro = 0; render(); save(); };
+  $("#btnBack").onclick = () => { S.screen = "cover"; render(); };
+}
+
+/* ---------- 프롤로그 ---------- */
+function renderPrologue() {
+  hud.hidden = true;
+  if (!PROLOGUE.length) return startGame();
+  const rows = PROLOGUE.slice(0, S.pro + 1).map(r => `
+    <div class="row${r.now ? " now" : ""}"><div class="y">${r.a}세</div><div><b>${r.t}</b>${r.v ? `<div class="v">${esc(r.v)}</div>` : ""}</div></div>`).join("");
+  const last = S.pro >= PROLOGUE.length - 1;
+  card.innerHTML = `<div class="card-in">
+    <div class="k"><b>인생 기록</b> · 지금까지 · ${PROLOGUE[0].a}세 → ${AGE_MIN}세</div>
+    <h2>지금까지의 이야기</h2>
+    <div class="rec">${rows}</div>
+    <div class="next">${last ? `<button class="btn accent wide" id="btnGo">${AGE_MIN}세, ${yearOf(AGE_MIN)}년 — 시작</button>` : `<button class="btn accent" id="btnMore">다음 →</button>`}</div>
+    <p class="hint">Enter/Space 다음</p>
+  </div>`;
+  if (last) $("#btnGo").onclick = startGame; else $("#btnMore").onclick = () => { S.pro++; render(); };
+}
+
+function startGame() { S.screen = "node"; S.node = CFG.startNode; S.age = nodeAge(NODES[S.node]); hud.hidden = false; buildHud(); render(); save(); }
+
+/* ---------- HUD ---------- */
+function buildHud() {
+  const tl = $("#tl"); tl.querySelectorAll(".tick").forEach(t => t.remove());
+  for (let a = AGE_MIN; a <= AGE_MAX; a += 10) {
+    const t = document.createElement("div"); t.className = "tick"; t.dataset.age = a;
+    t.style.left = ((a - AGE_MIN) / (AGE_MAX - AGE_MIN) * 100) + "%"; tl.appendChild(t);
+  }
+  $("#gauges").innerHTML = Object.keys(GAUGES).map(k => `
+    <div class="gauge ${k}"><div class="lab"><b>${GAUGES[k]}</b><span id="v-${k}">0</span></div><div class="bar"><i id="b-${k}"></i></div><div class="delta" id="d-${k}"></div></div>`).join("");
+  updateHud();
+}
+function setAge(a) {
+  $("#ageNum").textContent = a; $("#yearNum").textContent = "· " + yearOf(a) + "년";
+  const pct = Math.max(0, Math.min(100, (a - AGE_MIN) / (AGE_MAX - AGE_MIN) * 100));
+  $("#tlMe").style.left = pct + "%"; $("#tlDone").style.width = pct + "%";
+}
+function updateHud(delta = {}) {
+  setAge(S.age);
+  const n = S.screen === "node" ? NODES[S.node] : null;
+  $("#pill").textContent = n ? n.ch + (S.path ? " · " + S.path : "") : "삶의 기록";
+  const mb = $("#money"); mb.hidden = !USE_MONEY;
+  if (USE_MONEY) { $("#moneyNum").textContent = fmtMoney(S.money || 0); const dm = delta.money || 0, el = $("#moneyDelta"); el.textContent = dm ? (dm > 0 ? "+" : "−") + fmtMoney(Math.abs(dm)) : ""; el.className = "delta " + (dm > 0 ? "up" : dm < 0 ? "down" : ""); }
+  for (const k of Object.keys(GAUGES)) {
+    $("#v-" + k).textContent = S.g[k]; $("#b-" + k).style.width = (S.g[k] / GMAX * 100) + "%";
+    const d = delta[k] || 0, el = $("#d-" + k);
+    el.textContent = d ? (d > 0 ? "+" + d : "" + d) : ""; el.className = "delta " + (d > 0 ? "up" : d < 0 ? "down" : "");
+  }
+}
+let flowTimer = null;
+function flowAge(from, to) {
+  if (flowTimer) { clearInterval(flowTimer); flowTimer = null; }
+  if (to <= from || matchMedia("(prefers-reduced-motion: reduce)").matches) { setAge(to); return; }
+  const step = Math.max(60, Math.min(220, 1400 / (to - from))); let a = from;
+  flowTimer = setInterval(() => { a++; setAge(a); if (a >= to) { clearInterval(flowTimer); flowTimer = null; } }, step);
+}
+function fxText(fx) { const p = Object.entries(fx).map(([k, v]) => k === "money" ? `재산 ${v > 0 ? "+" : "−"}${fmtMoney(Math.abs(v))}` : `${GAUGES[k]} ${v > 0 ? "+" : ""}${v}`); return p.length ? p.join(" · ") : "—"; }
+function progress() { return Math.min(100, Math.round(S.log.length / MAXDEPTH * 100)); }
+
+/* ---------- 중대 결정 카드 ---------- */
+function renderNode(delta) {
+  const n = NODES[S.node], age = nodeAge(n);
+  hud.hidden = false; updateHud(delta || {});
+  card.innerHTML = `
+    <div class="modal-head"><span class="k"><b>중대 결정</b> · ${esc(n.ch)}</span><span class="k">${age}세 · ${yearOf(age)}년${S.path ? " · " + esc(S.path) : ""}</span></div>
+    <div class="card-in">
+      <h2>${esc(n.title)}</h2>
+      <div class="story">${nodeText(n).map(p => `<p>${p}</p>`).join("")}</div>
+      ${n.ref ? `<div class="ref"><b>자료</b>${n.ref}</div>` : ""}
+      ${n.pause ? `<div class="pause"><div class="k"><b>잠시 멈춤</b> · 여러분이라면?</div><p>${rich(n.pause)}</p></div>` : ""}
+      <div class="choices">${n.choices.map((c, i) => `
+        <button class="choice" data-i="${i}"><span class="n">${i + 1}</span><span>${c.t}<span class="fx ${S.showFx ? "" : "hidden"}">${fxText(c.fx)}</span></span></button>`).join("")}</div>
+      <div class="track"><i style="width:${progress()}%"></i></div>
+      <div class="track-note"><span>${S.log.length}번째 선택 앞 · 숫자키로 고르세요</span><span><button id="toggleFx">게이지 변화 ${S.showFx ? "숨기기" : "보기"}</button> · <button id="mapLink">엔딩 지도</button> · <button id="restart">처음부터</button></span></div>
+    </div>`;
+  card.querySelectorAll(".choice").forEach(b => b.onclick = () => choose(+b.dataset.i));
+  $("#toggleFx").onclick = () => { S.showFx = !S.showFx; render(); };
+  $("#mapLink").onclick = showMap; $("#restart").onclick = restart;
+}
+
+function choose(i) {
+  const n = NODES[S.node], c = n.choices[i], prevAge = S.age, age = nodeAge(n);
+  for (const [k, v] of Object.entries(c.fx)) { if (k === "money") S.money = (S.money || 0) + v; else S.g[k] = Math.max(0, Math.min(GMAX, S.g[k] + v)); }
+  if (c.flag) S.flags.push(c.flag);
+  if (c.path) S.path = c.path;
+  S.log.push({ age, title: n.title, choice: c.t.replace(/<[^>]+>/g, "") });
+  S.hist.push({ age, g: { ...S.g } });
+  if (c.next === "END" || !NODES[c.next]) { S.screen = "end"; render(); save(); return; }
+  if (NODES[c.next].age === "death") S.death = deathAge(S.g);
+  S.node = c.next; S.age = nodeAge(NODES[c.next]);
+  render(c.fx); flowAge(prevAge, S.age); save();
+}
+
+/* ---------- 엔딩 · 추모관 ---------- */
+function renderEnd() {
+  const key = pickEnding(), e = ENDINGS[key] || ENDINGS.tie, d = S.death || deathAge(S.g), nm = nameOr();
+  const f = funeralInfo();
+  if (flowTimer) { clearInterval(flowTimer); flowTimer = null; }
+  hud.hidden = false; S.age = d; updateHud();
+  const first = PROLOGUE[0] ? PROLOGUE[0].a : AGE_MIN;
+  const years = []; for (let a = first; a <= d; a++) years.push(a);
+  const evt = {}; S.log.forEach(l => { evt[l.age] = 1; });
+  const cells = years.map(a => { const [s, ch] = a === d ? ["sd", "†"] : stageOf(a); return `<div class="cell ${s}" title="${a}세 · ${yearOf(a)}년">${evt[a] && s !== "sd" ? "★" : ch}</div>`; }).join("");
+  card.innerHTML = `
+    <div class="modal-head"><span class="k"><b>엔딩</b> · ${esc(e.cond)}</span><span class="k">${d}세 · ${yearOf(d)}년 · ${esc(nm)}</span></div>
+    <div class="card-in">
+      <div class="memorial">
+        <div class="k">추모관 · 한 사람의 일</div>
+        <div class="mem-grid">
+          <div class="mem-card">${funeralSVG(f)}<b>${esc(nm)}</b><small>${BIRTH} – ${yearOf(d)} · 향년 ${d}세</small><p>${esc(e.epitaph)}</p>
+            <div class="fkv"><div><span>빈소</span><span>${esc(f.hall)}</span></div><div><span>조화</span><span>${f.wreath ? f.wreath + "개" : "없음"}</span></div><div><span>부고</span><span>${f.notices}명에게</span></div><div><span>조문객</span><span>${f.guests}명</span></div>${USE_MONEY ? `<div><span>남긴 재산</span><span>${fmtMoney(S.money || 0)}원 · ${esc(f.name)}</span></div>` : ""}</div>
+          </div>
+          <div><div class="ending-title">${esc(e.title)}</div><p class="epitaph">${esc(e.epitaph)}</p><div class="story">${e.text.map(p => `<p>${p}</p>`).join("")}<p class="fline">${esc(f.tierLine)} ${esc(f.bondLine)}</p></div><img class="px scene" src="${SPR[e.pic] || SPR.l1}" alt=""></div>
+        </div>
+        <div class="candles"><div class="row" id="candleRow"></div><span id="candleMsg"></span><button id="candleBtn">촛불 켜기</button></div>
+      </div>
+      <div class="tiles">
+        <div class="tile"><b>${S.log.length}</b><span>번의 중대 결정</span></div>
+        <div class="tile"><b class="teal">${d - AGE_MIN}</b><span>AI 이후에 산 햇수</span></div>
+        <div class="tile"><b class="pink">${key === "tie" ? "동점" : GAUGES[key]}</b><span>${key === "tie" ? "최고 게이지 동점" : "가장 높이 쌓인 가치"}</span></div>
+        ${USE_MONEY ? `<div class="tile"><b class="gold">${fmtMoney(S.money || 0)}</b><span>남긴 재산 (만원 단위)</span></div>` : ""}
+      </div>
+      <div class="two">
+        <div class="panel"><h3>인생 지도</h3><div class="sub">한 칸 = 1년 · ${first}세부터 ${d}세까지 · ★ 중대 결정</div>
+          <div class="map">${cells}</div>
+          <div class="map-legend"><span class="s0">무직</span><span class="s1">일하는 시기</span><span class="s3">AI 도입</span><span class="s2">AI 이후 경로${S.path ? " · " + esc(S.path) : ""}</span><span class="s4">퇴직 이후</span><span class="sd">마지막</span></div>
+          <div class="map-keys">${esc(CFG["지도범례"] || "")}</div>
+        </div>
+        <div class="panel"><h3>남긴 것</h3><div class="sub">마지막 게이지</div>
+          <div class="kv">${Object.keys(GAUGES).map(k => `<div><span>${GAUGES[k]}</span><span>${S.g[k]} / ${GMAX}</span></div>`).join("")}${USE_MONEY ? `<div><span>재산</span><span>${fmtMoney(S.money || 0)}원</span></div>` : ""}
+            <div><span>경로</span><span>${esc(S.path || "—")}</span></div><div><span>기록</span><span>${esc(S.flags.length ? S.flags.join(", ") : "—")}</span></div></div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:18px"><h3>게이지 변화</h3><div class="sub">${AGE_MIN}세부터 ${d}세까지 · 네 가지 가치</div>${chartSVG()}
+        <div class="legend"><span class="self">자아실현</span><span class="prod">생산성</span><span class="moral">도덕</span><span class="bond">관계</span></div></div>
+      <div class="panel" style="margin-top:18px"><h3>인생 기록 · 선택</h3><div class="sub">연표 · 결정 순서대로</div>
+        <div class="rec">${S.log.map(l => `<div class="row"><div class="y">${l.age}세</div><div><span class="t">${esc(l.title)} — </span>${esc(l.choice)}</div></div>`).join("")}</div></div>
+      <div class="cta">
+        <h2>${esc(CFG["마지막질문"] || "")}</h2><p>${esc(CFG["마지막부제"] || "")}</p>
+        <div class="next"><button class="btn" id="mapLink">엔딩 지도</button><button class="btn accent" id="again">다시 살기</button></div>
+        <div class="deco"><img class="px" src="${SPR.tree}" alt=""><img class="px h" src="${SPR.house}" alt=""><img class="px p" src="${SPR.person}" alt=""><img class="px" src="${SPR.dog}" alt=""></div>
+      </div>
+    </div>`;
+  $("#again").onclick = restart; $("#mapLink").onclick = showMap;
+  drawCandles(); $("#candleBtn").onclick = () => { S.candles = Math.min(8, S.candles + 1); drawCandles(); save(); };
+}
+function drawCandles() {
+  $("#candleRow").innerHTML = Array.from({ length: 8 }, (_, i) => `<img class="px" src="${i < S.candles ? SPR.candleOn : SPR.candleOff}" alt="">`).join("");
+  $("#candleMsg").textContent = S.candles ? `${S.candles}명이 촛불을 켜 두었어요.` : "누군가 촛불을 켜 두었어요.";
+}
+function chartSVG() {
+  const W = 720, H = 220, L = 36, R = 16, T = 14, B = 30, pts = S.hist, n = pts.length;
+  const x = i => L + (n > 1 ? i / (n - 1) : 0) * (W - L - R), y = v => T + (1 - v / GMAX) * (H - T - B);
+  let s = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="게이지 변화 그래프">`;
+  for (const v of [0, GMAX / 2, GMAX]) s += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--rule)" stroke-width="1"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--ink3)">${v}</text>`;
+  pts.forEach((p, i) => { s += `<text x="${x(i)}" y="${H - 10}" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--ink3)">${p.age}</text>`; });
+  for (const k of Object.keys(GAUGES)) {
+    const d = pts.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p.g[k]).toFixed(1)}`).join(" ");
+    s += `<path d="${d}" fill="none" stroke="var(--g-${k})" stroke-width="2.5" stroke-linejoin="round"/>`;
+    s += `<circle cx="${x(n - 1)}" cy="${y(pts[n - 1].g[k])}" r="4" fill="var(--g-${k})" stroke="var(--card2)" stroke-width="2"/>`;
+  }
+  return s + `</svg>`;
+}
+
+function showMap() {
+  if (document.querySelector(".overlay")) return;
+  const ov = document.createElement("div"); ov.className = "overlay";
+  ov.innerHTML = `<div class="panel">
+    <div class="k"><b>엔딩 지도</b> · ${Object.keys(ENDINGS).length}갈래</div>
+    <h2 style="margin-top:4px">마지막에 가장 높이 쌓인 가치가 엔딩을 정합니다</h2>
+    <p class="lede">동점이면 ‘동점’ 엔딩으로 갑니다. 사망 나이는 ${CFG.deathBase} + 관계×${CFG.deathMul} (최대 +${CFG.deathMax}) → ${Math.round(CFG.deathBase)}~${Math.round(CFG.deathBase + CFG.deathMax)}세. 노드 ${Object.keys(NODES).length}개, 가장 긴 결정 경로 ${MAXDEPTH}단계.</p>
+    <div class="emap">${Object.entries(ENDINGS).map(([k, e]) => `<div class="e ${k}"><b>${esc(e.title)}</b><small>${esc(e.cond)} · ${esc(e.epitaph)}</small></div>`).join("")}</div>
+    <div class="next"><button class="btn" id="closeMap">닫기</button></div></div>`;
+  document.body.appendChild(ov);
+  const close = () => ov.remove();
+  ov.querySelector("#closeMap").onclick = close; ov.addEventListener("click", e => { if (e.target === ov) close(); });
+}
+function restart() { S = fresh(); hud.hidden = true; render(); save(); }
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  const ov = document.querySelector(".overlay");
+  if (e.key === "Escape" && ov) { ov.remove(); return; }
+  if (e.key === "m" || e.key === "M") { ov ? ov.remove() : showMap(); return; }
+  if (e.key === "r" || e.key === "R") { restart(); return; }
+  if (S.screen === "node" && /^[1-9]$/.test(e.key)) { const i = +e.key - 1; if (NODES[S.node].choices[i]) choose(i); return; }
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    if (S.screen === "cover") { S.screen = "regi"; render(); }
+    else if (S.screen === "regi") { S.screen = "prologue"; S.pro = 0; render(); }
+    else if (S.screen === "prologue") { if (S.pro >= PROLOGUE.length - 1) startGame(); else { S.pro++; render(); } }
+    else if (S.screen === "node" && NODES[S.node].choices.length === 1) choose(0);
+  }
+});
+/* 시나리오.txt 끌어다 놓기 */
+document.addEventListener("dragover", e => { e.preventDefault(); document.body.classList.add("drop"); });
+document.addEventListener("dragleave", () => document.body.classList.remove("drop"));
+document.addEventListener("drop", e => { e.preventDefault(); document.body.classList.remove("drop"); const f = e.dataTransfer.files[0]; if (f) importFile(f); });
+
+function start(data) {
+  S = (data && data.S) ? data.S : fresh();
+  if (S.screen === "node" && !NODES[S.node]) S = fresh();
+  const hudOn = S.screen === "node" || S.screen === "end";
+  if (hudOn) buildHud();
+  hud.hidden = !hudOn;
+  render();
+}
+loadScenario().then(t => {
+  useText(t);
+  window.claude?.hot?.snapshot?.(() => ({ S }));
+  window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+});
+
+</script>
+</body>
+</html>
